@@ -1,4 +1,11 @@
 export const serverConfig = {
-  summon_3: 0.6,
-  summon_4: 0.9,
+  summon: {
+    summon_3: 0.6,
+    summon_4: 0.9,
+  },
+  cp: {
+    cp_multiplier: 1.04,
+    cp_base: 30,
+    star_multiplier: 0.1,
+  },
 };

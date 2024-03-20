@@ -1,12 +1,15 @@
 import { HeroData } from "../types/HeroData";
 import { serverConfig } from "../serverConfig";
 import { heroLibrary } from "../heroLibrary";
+import { calculateCp } from "./calculateCp";
 
 function getRandomStars() {
   const roll = Math.random();
-  if (roll <= serverConfig.summon_3) {
+  const { summon_3, summon_4 } = serverConfig.summon;
+
+  if (roll <= summon_3) {
     return 3;
-  } else if (roll <= serverConfig.summon_4) {
+  } else if (roll <= summon_4) {
     return 4;
   } else {
     return 5;
@@ -19,6 +22,7 @@ export const summonHeroes = (amount: number) => {
   for (let i = 0; i < amount; i++) {
     const randomIndex = Math.floor(Math.random() * heroLibrary.length);
     const chosenHero = heroLibrary[randomIndex];
+
     const nextHero: HeroData = {
       name: chosenHero.name,
       stars: getRandomStars(),
@@ -27,6 +31,9 @@ export const summonHeroes = (amount: number) => {
       image: chosenHero.image,
       in_battle: false,
     };
+
+    nextHero.cp = calculateCp(nextHero);
+
     summonedHeroes.push(nextHero);
   }
 

@@ -35,7 +35,6 @@ export const initializeInventory = async (
   }
 };
 
-//delete all inventories
 export const deleteAllInventories = async (
   req: Request,
   res: Response
