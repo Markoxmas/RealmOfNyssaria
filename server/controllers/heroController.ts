@@ -30,3 +30,17 @@ export const getHeroById = async (
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+//delete all the heroes
+export const deleteAllHeroes = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    await Hero.deleteMany({});
+    res.status(204).end();
+  } catch (error) {
+    console.error("Error deleting heroes:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
