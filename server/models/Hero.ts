@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 // Define the interface for your Hero document
-interface IHero extends Document {
+export interface IHero extends Document {
   name: string;
   stars: number;
   level: number;
