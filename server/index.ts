@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import heroRoutes from "./routes/heroRoutes";
 import summonRoutes from "./routes/summonRoutes";
+import inventoryRoutes from "./routes/inventoryRoutes";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ db.once("open", () => {
 
 app.use("/api/heroes", heroRoutes);
 app.use("/api/summon", summonRoutes);
+app.use("/api/inventory", inventoryRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
