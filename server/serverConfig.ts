@@ -8,4 +8,7 @@ export const serverConfig = {
     cp_base: 30,
     star_multiplier: 0.1,
   },
+  battle: {
+    max_monster_hp: 10000,
+  },
 };
