@@ -11,4 +11,8 @@ export const serverConfig = {
   battle: {
     max_monster_hp: 10000,
   },
+  drops: {
+    gold_multiplier: 0.1,
+    scroll_of_summon_drop_rate: 0.05,
+  },
 };

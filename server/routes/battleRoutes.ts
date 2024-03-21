@@ -5,6 +5,7 @@ import {
   getBattleById,
   updateBattle,
   deleteAllBattles,
+  claimBattleLoot,
 } from "../controllers/battleController";
 
 const router: Router = express.Router();
@@ -14,5 +15,7 @@ router.get("/", getAllBattles);
 router.get("/:battleId", getBattleById);
 router.patch("/update/:battleId", updateBattle);
 router.delete("/", deleteAllBattles);
+
+router.patch("/claim/:battleId/:inventoryId", claimBattleLoot);
 
 export default router;

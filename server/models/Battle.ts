@@ -7,7 +7,7 @@ export interface BattleMilestone {
   heroes_ids: string[];
 }
 
-interface IBattle extends Document {
+export interface IBattle extends Document {
   battleMilestones: BattleMilestone[];
 }
 
