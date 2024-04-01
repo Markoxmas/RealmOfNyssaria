@@ -6,6 +6,7 @@ import summonRoutes from "./routes/summonRoutes";
 import inventoryRoutes from "./routes/inventoryRoutes";
 import battleRoutes from "./routes/battleRoutes";
 import upgradeRoutes from "./routes/upgradeRoutes";
+import configRoutes from "./routes/configRoutes";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/api/summon", summonRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/battle", battleRoutes);
 app.use("/api/upgrade", upgradeRoutes);
+app.use("/api/config", configRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
