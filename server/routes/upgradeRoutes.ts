@@ -1,8 +1,9 @@
 import express, { Router } from "express";
-import { levelUp } from "../controllers/upgradeController";
+import { levelUp, starUp } from "../controllers/upgradeController";
 
 const router: Router = express.Router();
 
-router.patch("/:heroId/:amount/:inventoryId", levelUp);
+router.patch("/levelup/:hero_id/:amount/:inventoryId", levelUp);
+router.put("/starup/:hero_id", starUp);
 
 export default router;

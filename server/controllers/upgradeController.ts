@@ -4,13 +4,14 @@ import Inventory from "../models/Inventory";
 import { calculateLevelUpCost } from "../lib/calculateLevelUpCost";
 import { calculateCp } from "../lib/calculateCp";
 import { serverConfig } from "../serverConfig";
+import { areSacrificesFulfilled } from "../lib/areSacrificesFulfilled";
 
 export const levelUp = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { heroId, inventoryId } = req.params;
+    const { hero_id, inventoryId } = req.params;
     const amount = Number(req.params.amount);
 
-    const hero = await Hero.findById(heroId);
+    const hero = await Hero.findById(hero_id);
     if (!hero) {
       res.status(404).json({ error: "Hero not found" });
       return;
@@ -41,7 +42,51 @@ export const levelUp = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({ hero, inventory });
   } catch (error) {
-    console.error("Error retrieving inventories:", error);
-    res.status(500).json({ error: "Failed to retrieve inventories" });
+    console.error("Error leveling up", error);
+    res.status(500).json({ error: "Failed to level up the hero" });
+  }
+};
+
+export const starUp = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { hero_id } = req.params;
+    const { sacrificeIds } = req.body;
+    const { sacrifices } = serverConfig.upgrade;
+
+    const hero = await Hero.findById(hero_id);
+    if (!hero) {
+      res.status(404).json({ error: "Hero not found" });
+      return;
+    }
+
+    const sacrificeHeroes = await Hero.find({ _id: { $in: sacrificeIds } });
+    if (sacrificeHeroes.length !== sacrificeIds.length) {
+      res.status(400).json({ error: "Some heroes were not found" });
+      return;
+    }
+
+    const sacrificesNeeded = sacrifices[hero.stars - 1];
+    const isSacrificeValid = areSacrificesFulfilled(
+      hero,
+      sacrificeHeroes,
+      sacrificesNeeded
+    );
+
+    if (!isSacrificeValid) {
+      res.status(400).json({ error: "Invalid sacrifices" });
+      return;
+    }
+
+    hero.stars += 1;
+    hero.cp = calculateCp(hero);
+    await hero.save();
+
+    const idsToDelete = sacrificeHeroes.map((hero) => hero._id);
+    await Hero.deleteMany({ _id: { $in: idsToDelete } });
+
+    res.status(200).json({ hero, deletedHeroes: idsToDelete });
+  } catch (error) {
+    console.error("Error starring up", error);
+    res.status(500).json({ error: "Failed to star up the hero" });
   }
 };
