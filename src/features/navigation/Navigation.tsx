@@ -3,11 +3,11 @@ import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import { setTab, NavigationTabs, selectTab } from "./navigationSlice";
+import { setTab, NavigationTabs } from "./navigationSlice";
 
 export default function Navigation() {
   const dispatch = useAppDispatch();
-  const tab = useAppSelector(selectTab);
+  const tab = useAppSelector((state) => state.navigation.tab);
 
   const handleChange = (
     event: React.SyntheticEvent,

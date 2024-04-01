@@ -19,7 +19,11 @@ import Shamus from "./Shamus.jpg";
 import Uxeor from "./Uxeor.jpg";
 import Zaleria from "./Zaleria.jpg";
 
-export const AVATARS = {
+interface Avatars {
+  [key: string]: string;
+}
+
+export const AVATARS: Avatars = {
   Alina,
   Ballmak,
   Ciliren,

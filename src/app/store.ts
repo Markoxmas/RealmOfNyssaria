@@ -1,11 +1,11 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-import counterSlice from "../features/counter/counterSlice";
 import navigationSlice from "../features/navigation/navigationSlice";
+import heroesSlice from "../features/heroes/heroesSlice";
 
 export const store = configureStore({
   reducer: {
-    counter: counterSlice,
     navigation: navigationSlice,
+    heroes: heroesSlice,
   },
 });
 

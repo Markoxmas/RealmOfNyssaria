@@ -27,6 +27,6 @@ export const navigationSlice = createSlice({
 
 export const { setTab } = navigationSlice.actions;
 
-export const selectTab = (state: RootState) => state.navigation.tab;
+export const tab = (state: RootState) => state.navigation.tab;
 
 export default navigationSlice.reducer;
