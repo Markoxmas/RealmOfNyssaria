@@ -5,14 +5,14 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Hero as HeroType } from "./heroesSlice";
 import { AVATARS } from "../../assets/avatars/index";
-import StarIcon from "@mui/icons-material/Star";
+import StarRateIcon from "@mui/icons-material/StarRate";
 
 function renderStars(hero: HeroType) {
   let stars = [];
   const starsAmount = hero.stars > 5 ? hero.stars - 5 : hero.stars;
   const starsColor = hero.stars > 5 ? "red" : "yellow";
   for (let i = 0; i < starsAmount; i++) {
-    stars.push(<StarIcon key={hero._id + i} sx={{ color: starsColor }} />);
+    stars.push(<StarRateIcon key={hero._id + i} sx={{ color: starsColor }} />);
   }
   return stars;
 }
@@ -21,35 +21,31 @@ export default function Hero({ hero }: { hero: HeroType }) {
   return (
     <Card
       sx={{
-        width: 200,
+        width: 150,
         textAlign: "center",
-        border: "1px solid black",
-        padding: "5px",
+        border: "3px solid rgba(189, 195, 199, 1)",
+        padding: "2px",
         borderRadius: "10px",
+        background: "rgba(218, 223, 225, 1)",
       }}
     >
-      <CardHeader
-        title={
-          <Typography variant="body1" noWrap>
-            <b>{hero.name}</b>
-          </Typography>
-        }
-        subheader={`Lv. ${hero.level}`}
-      />
+      <div>
+        <b>
+          {hero.name} Lv. {hero.level}
+        </b>
+      </div>
       <CardMedia
         component="img"
-        height="200"
-        width="200"
+        height="150"
+        width="150"
         image={AVATARS[hero.image]}
         alt={hero.name}
         style={{ borderRadius: "10px" }}
       />
-      <CardContent>
+      <div>
+        <div>{hero.cp} CP</div>
         {renderStars(hero)}
-        <Typography variant="body2" color="text.secondary">
-          CP: {hero.cp}
-        </Typography>
-      </CardContent>
+      </div>
     </Card>
   );
 }
