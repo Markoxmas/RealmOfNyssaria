@@ -13,7 +13,7 @@ const router: Router = express.Router();
 router.post("/", initializeBattle);
 router.get("/", getAllBattles);
 router.get("/:battleId", getBattleById);
-router.patch("/update/:battleId", updateBattle);
+router.patch("/update/:battleId", updateBattle); // body: heroes_ids string[]
 router.delete("/", deleteAllBattles);
 
 router.patch("/claim/:battleId/:inventoryId", claimBattleLoot);

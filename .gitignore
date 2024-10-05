@@ -24,3 +24,5 @@ yarn-error.log*
 
 /server/node_modules
 /server/.env
+
+notes.txt
