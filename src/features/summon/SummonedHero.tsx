@@ -1,6 +1,6 @@
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
-import { Hero as HeroType } from "./heroesSlice";
+import { Hero as HeroType } from "../heroes/heroesSlice";
 import { AVATARS } from "../../assets/avatars/index";
 import StarRateIcon from "@mui/icons-material/StarRate";
 
@@ -9,16 +9,21 @@ function renderStars(hero: HeroType) {
   const starsAmount = hero.stars > 5 ? hero.stars - 5 : hero.stars;
   const starsColor = hero.stars > 5 ? "red" : "yellow";
   for (let i = 0; i < starsAmount; i++) {
-    stars.push(<StarRateIcon key={hero._id + i} sx={{ color: starsColor }} />);
+    stars.push(
+      <StarRateIcon
+        key={hero._id + i}
+        sx={{ color: starsColor, width: "20px" }}
+      />
+    );
   }
   return stars;
 }
 
-export default function Hero({ hero }: { hero: HeroType }) {
+export default function SummonedHero({ hero }: { hero: HeroType }) {
   return (
     <Card
       sx={{
-        width: 150,
+        width: 100,
         textAlign: "center",
         border: "3px solid rgba(189, 195, 199, 1)",
         padding: "2px",
@@ -27,22 +32,17 @@ export default function Hero({ hero }: { hero: HeroType }) {
       }}
     >
       <div>
-        <b>
-          {hero.name} [{hero.level}]
-        </b>
+        <b>{hero.name}</b>
       </div>
       <CardMedia
         component="img"
-        height="150"
-        width="150"
+        height="100"
+        width="100"
         image={AVATARS[hero.image]}
         alt={hero.name}
         style={{ borderRadius: "10px" }}
       />
-      <div>
-        <div>{hero.cp} CP</div>
-        {renderStars(hero)}
-      </div>
+      <div>{renderStars(hero)}</div>
     </Card>
   );
 }
