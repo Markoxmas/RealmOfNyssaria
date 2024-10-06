@@ -90,3 +90,30 @@ export const starUp = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ error: "Failed to star up the hero" });
   }
 };
+
+export const getUpgradeInfo = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { hero_id } = req.params;
+
+    const hero = await Hero.findById(hero_id);
+    if (!hero) {
+      res.status(404).json({ error: "Hero not found" });
+      return;
+    }
+
+    const upgradeInfo = {
+      levelUpBase: serverConfig.upgrade.level_up_base,
+      levelUpMultiplier: serverConfig.upgrade.level_up_multiplier,
+      maxLevel: serverConfig.upgrade.star_max_level[hero.stars - 1],
+      sacrifices: serverConfig.upgrade.sacrifices[hero.stars - 1],
+    };
+
+    res.status(200).json({ hero, upgradeInfo });
+  } catch (error) {
+    console.error("Error getting upgrade info", error);
+    res.status(500).json({ error: "Failed to get upgrade info" });
+  }
+};

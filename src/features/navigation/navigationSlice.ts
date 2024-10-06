@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
+import { selectHero } from "../upgrade/upgradeSlice";
 
 export enum NavigationTabs {
   BATTLE = 0,
@@ -25,7 +26,7 @@ export const navigationSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase("upgrade/selectHero", (state) => {
+    builder.addCase(selectHero.fulfilled, (state) => {
       state.tab = NavigationTabs.UPGRADE;
     });
   },
