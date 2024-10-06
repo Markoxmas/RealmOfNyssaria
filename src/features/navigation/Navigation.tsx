@@ -21,7 +21,7 @@ export default function Navigation() {
       <Tabs value={tab} onChange={handleChange} centered>
         <Tab label="Battle" value={NavigationTabs.BATTLE} />
         <Tab label="Heroes" value={NavigationTabs.HEROES} />
-        <Tab label="Summon" value={NavigationTabs.SUMMON} />
+        <Tab label="Summon" value={NavigationTabs.SUMMON} />"
       </Tabs>
     </Box>
   );

@@ -3,6 +3,8 @@ import CardMedia from "@mui/material/CardMedia";
 import { Hero as HeroType } from "./heroesSlice";
 import { AVATARS } from "../../assets/avatars/index";
 import StarRateIcon from "@mui/icons-material/StarRate";
+import { useAppDispatch } from "../../app/hooks";
+import { selectHero } from "../upgrade/upgradeSlice";
 
 function renderStars(hero: HeroType) {
   let stars = [];
@@ -15,6 +17,7 @@ function renderStars(hero: HeroType) {
 }
 
 export default function Hero({ hero }: { hero: HeroType }) {
+  const dispatch = useAppDispatch();
   return (
     <Card
       sx={{
@@ -25,6 +28,7 @@ export default function Hero({ hero }: { hero: HeroType }) {
         borderRadius: "10px",
         background: "rgba(218, 223, 225, 1)",
       }}
+      onClick={() => dispatch(selectHero(hero))}
     >
       <div>
         <b>

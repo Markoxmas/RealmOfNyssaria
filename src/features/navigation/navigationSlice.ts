@@ -5,6 +5,7 @@ export enum NavigationTabs {
   BATTLE = 0,
   HEROES = 1,
   SUMMON = 2,
+  UPGRADE = 3,
 }
 
 export interface NavigationState {
@@ -22,6 +23,11 @@ export const navigationSlice = createSlice({
     setTab: (state, action: PayloadAction<NavigationTabs>) => {
       state.tab = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase("upgrade/selectHero", (state) => {
+      state.tab = NavigationTabs.UPGRADE;
+    });
   },
 });
 
