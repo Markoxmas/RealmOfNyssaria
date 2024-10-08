@@ -3,6 +3,7 @@ import axios from "axios";
 import { RootState } from "../../app/store";
 import { levelUp } from "../upgrade/upgradeSlice";
 import { summonHeroes } from "../summon/summonSlice";
+import { starUp } from "../upgrade/upgradeSlice";
 
 export interface Hero {
   _id: string;
@@ -51,6 +52,16 @@ const heroesSlice = createSlice({
       })
       .addCase(summonHeroes.fulfilled, (state, action) => {
         state.heroes = [...state.heroes, ...action.payload.summonedHeroes];
+      })
+      .addCase(starUp.fulfilled, (state, action) => {
+        state.heroes = [...state.heroes]
+          .map((hero) => {
+            if (hero._id === action.payload.hero._id) {
+              return action.payload.hero;
+            }
+            return hero;
+          })
+          .filter((hero) => !action.payload.deletedHeroes.includes(hero._id));
       });
   },
 });

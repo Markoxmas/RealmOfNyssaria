@@ -68,7 +68,7 @@ export const starUp = async (req: Request, res: Response): Promise<void> => {
     const sacrificesNeeded = sacrifices[hero.stars - 1];
     const isSacrificeValid = areSacrificesFulfilled(
       hero,
-      sacrificeHeroes,
+      [...sacrificeHeroes],
       sacrificesNeeded
     );
 
@@ -81,10 +81,17 @@ export const starUp = async (req: Request, res: Response): Promise<void> => {
     hero.cp = calculateCp(hero);
     await hero.save();
 
+    const upgradeInfo = {
+      levelUpBase: serverConfig.upgrade.level_up_base,
+      levelUpMultiplier: serverConfig.upgrade.level_up_multiplier,
+      maxLevel: serverConfig.upgrade.star_max_level[hero.stars - 1],
+      sacrifices: serverConfig.upgrade.sacrifices[hero.stars - 1],
+    };
+
     const idsToDelete = sacrificeHeroes.map((hero) => hero._id);
     await Hero.deleteMany({ _id: { $in: idsToDelete } });
 
-    res.status(200).json({ hero, deletedHeroes: idsToDelete });
+    res.status(200).json({ hero, deletedHeroes: idsToDelete, upgradeInfo });
   } catch (error) {
     console.error("Error starring up", error);
     res.status(500).json({ error: "Failed to star up the hero" });
