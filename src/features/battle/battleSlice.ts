@@ -2,10 +2,10 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export type BattleMilestone = {
-  monsterHp: number;
-  startTime: number;
-  collectiveCp: number;
-  heroesIds: string[];
+  monster_hp: number;
+  start_time: number;
+  collective_cp: number;
+  heroes_ids: string[];
 };
 
 export type Battle = {
@@ -22,10 +22,10 @@ const initialState: BattleState = {
     id: "initial",
     battleMilestones: [
       {
-        monsterHp: 100,
-        startTime: Date.now(),
-        collectiveCp: 0,
-        heroesIds: [],
+        monster_hp: 100,
+        start_time: Date.now(),
+        collective_cp: 0,
+        heroes_ids: [],
       },
     ],
   },

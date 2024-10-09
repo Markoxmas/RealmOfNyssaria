@@ -2,6 +2,7 @@ import { fetchBattle } from "./battleSlice";
 import { useEffect } from "react";
 import { useAppDispatch } from "../../app/hooks";
 import BattleTimer from "./BattleTimer";
+import BattleHeroes from "./BattleHeroes";
 
 export default function BattlePage() {
   const dispatch = useAppDispatch();
@@ -11,8 +12,11 @@ export default function BattlePage() {
   }, []);
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
+    <div
+      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
       <BattleTimer />
+      <BattleHeroes />
     </div>
   );
 }
