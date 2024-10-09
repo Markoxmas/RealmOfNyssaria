@@ -73,6 +73,7 @@ export const updateBattle = async (
       res.status(404).json({ error: "Battle not found" });
       return;
     }
+    console.log("Marko", heroes);
     if (battle.battleMilestones.length === 0) {
       const { max_monster_hp } = serverConfig.battle;
 
@@ -80,9 +81,9 @@ export const updateBattle = async (
         monster_hp: max_monster_hp,
         start_time: Date.now(),
         collective_cp,
-        heroes_ids,
+        heroes,
       });
-
+      console.log("Marko", battle);
       await battle.save();
       res.status(201).json(battle);
     } else {
@@ -90,8 +91,9 @@ export const updateBattle = async (
         monster_hp: calculateMonsterHp(battle.battleMilestones),
         start_time: Date.now(),
         collective_cp,
-        heroes_ids,
+        heroes,
       });
+      console.log("Marko", battle);
       await battle.save();
       res.status(200).json(battle);
     }
@@ -131,13 +133,8 @@ export const claimBattleLoot = async (
       return;
     }
 
-    const currentHeroesIds =
-      battle.battleMilestones[battle.battleMilestones.length - 1].heroes_ids;
-    const heroes = await Hero.find({ _id: { $in: currentHeroesIds } });
-    if (heroes.length !== currentHeroesIds.length) {
-      res.status(500).json({ error: "Some heroes were not found" });
-      return;
-    }
+    const heroes =
+      battle.battleMilestones[battle.battleMilestones.length - 1].heroes;
 
     const drops = getDrops(battle.battleMilestones);
 
@@ -156,7 +153,7 @@ export const claimBattleLoot = async (
         monster_hp: calculateMonsterHp(battle.battleMilestones),
         start_time: Date.now(),
         collective_cp: heroes.reduce((acc, hero) => acc + hero.cp, 0),
-        heroes_ids: currentHeroesIds,
+        heroes,
       },
     ];
 

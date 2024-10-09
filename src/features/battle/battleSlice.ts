@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { Hero } from "../heroes/heroesSlice";
 
 export type BattleMilestone = {
   monster_hp: number;
   start_time: number;
   collective_cp: number;
-  heroes_ids: string[];
+  heroes: Hero[];
 };
 
 export type Battle = {
@@ -25,7 +26,7 @@ const initialState: BattleState = {
         monster_hp: 100,
         start_time: Date.now(),
         collective_cp: 0,
-        heroes_ids: [],
+        heroes: [],
       },
     ],
   },

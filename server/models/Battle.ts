@@ -4,7 +4,14 @@ export interface BattleMilestone {
   monster_hp: number;
   start_time: number;
   collective_cp: number;
-  heroes_ids: string[];
+  heroes: {
+    name: string;
+    stars: number;
+    level: number;
+    cp: number;
+    image: string;
+    in_battle: boolean;
+  }[];
 }
 
 export interface IBattle extends Document {
@@ -17,7 +24,16 @@ const BattleSchema: Schema = new Schema({
       monster_hp: { type: Number, required: true },
       start_time: { type: Number, required: true },
       collective_cp: { type: Number, required: true },
-      heroes_ids: [{ type: String, required: true }],
+      heroes: [
+        {
+          name: { type: String, required: true },
+          stars: { type: Number, required: true },
+          level: { type: Number, required: true },
+          cp: { type: Number, required: true },
+          image: { type: String, required: true },
+          in_battle: { type: Boolean, required: true },
+        },
+      ],
     },
   ],
 });

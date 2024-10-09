@@ -22,8 +22,10 @@ export default function BattleHeroes() {
   if (battle) {
     const lastMilestone =
       battle.battleMilestones[battle.battleMilestones.length - 1];
-    lastMilestone.heroes_ids.forEach((heroId) => {
-      const foundHero = heroes.find((hero) => hero._id === heroId);
+    lastMilestone.heroes.forEach((hero) => {
+      const foundHero = heroes.find(
+        (inventoryHero) => hero._id === inventoryHero._id
+      );
       if (foundHero) {
         heroesInBattle.push(foundHero);
       }
