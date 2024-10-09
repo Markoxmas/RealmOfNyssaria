@@ -3,6 +3,7 @@ import Navigation from "./features/navigation/Navigation";
 import HeroesPage from "./features/heroes/HeroesPage";
 import SummonPage from "./features/summon/SummonPage";
 import UpgradePage from "./features/upgrade/UpgradePage";
+import BattlePage from "./features/battle/BattlePage";
 import { useAppSelector, useAppDispatch } from "./app/hooks";
 import { NavigationTabs } from "./features/navigation/navigationSlice";
 import { getInventory } from "./features/inventory/inventorySlice";
@@ -20,6 +21,7 @@ function App() {
       {tab === NavigationTabs.HEROES && <HeroesPage />}
       {tab === NavigationTabs.SUMMON && <SummonPage />}
       {tab === NavigationTabs.UPGRADE && <UpgradePage />}
+      {tab === NavigationTabs.BATTLE && <BattlePage />}
     </>
   );
 }

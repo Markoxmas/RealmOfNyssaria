@@ -4,6 +4,7 @@ import heroesSlice from "../features/heroes/heroesSlice";
 import summonSlice from "../features/summon/summonSlice";
 import upgradeSlice from "../features/upgrade/upgradeSlice";
 import inventorySlice from "../features/inventory/inventorySlice";
+import battleSlice from "../features/battle/battleSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     summon: summonSlice,
     upgrade: upgradeSlice,
     inventory: inventorySlice,
+    battle: battleSlice,
   },
 });
 
