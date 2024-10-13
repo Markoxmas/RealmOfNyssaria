@@ -153,9 +153,11 @@ export default function StarUpModal() {
                 maxHeight: "40vh",
               }}
             >
-              {availableModalHeroes.map((hero) => {
-                return renderHero(hero, dispatch);
-              })}
+              {[...availableModalHeroes]
+                .sort((a, b) => b.cp - a.cp)
+                .map((hero) => {
+                  return renderHero(hero, dispatch);
+                })}
             </Box>
             <div style={{ width: "100%", textAlign: "center" }}>
               <Button variant="contained" onClick={closeModal}>

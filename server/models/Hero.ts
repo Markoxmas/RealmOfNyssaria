@@ -6,7 +6,6 @@ export interface IHero extends Document {
   level: number;
   cp: number;
   image: string;
-  in_battle: boolean;
 }
 
 const HeroSchema: Schema = new Schema({
@@ -15,7 +14,6 @@ const HeroSchema: Schema = new Schema({
   level: { type: Number, required: true },
   cp: { type: Number, required: true },
   image: { type: String, required: true },
-  in_battle: { type: Boolean, required: true },
 });
 
 const Hero = mongoose.model<IHero>("Hero", HeroSchema);

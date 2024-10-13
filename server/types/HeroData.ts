@@ -4,5 +4,4 @@ export type HeroData = {
   level: number;
   cp: number;
   image: string;
-  in_battle: boolean;
 };

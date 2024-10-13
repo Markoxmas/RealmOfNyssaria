@@ -29,7 +29,6 @@ export const summonHeroes = (amount: number) => {
       level: 1,
       cp: 0,
       image: chosenHero.image,
-      in_battle: false,
     };
 
     nextHero.cp = calculateCp(nextHero);

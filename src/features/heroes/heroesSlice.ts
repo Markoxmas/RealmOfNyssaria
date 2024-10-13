@@ -12,7 +12,6 @@ export interface Hero {
   level: number;
   cp: number;
   image: string;
-  in_battle: boolean;
 }
 
 interface HeroesState {

@@ -73,7 +73,7 @@ export const updateBattle = async (
       res.status(404).json({ error: "Battle not found" });
       return;
     }
-    console.log("Marko", heroes);
+
     if (battle.battleMilestones.length === 0) {
       const { max_monster_hp } = serverConfig.battle;
 
@@ -83,7 +83,7 @@ export const updateBattle = async (
         collective_cp,
         heroes,
       });
-      console.log("Marko", battle);
+
       await battle.save();
       res.status(201).json(battle);
     } else {
@@ -93,7 +93,7 @@ export const updateBattle = async (
         collective_cp,
         heroes,
       });
-      console.log("Marko", battle);
+
       await battle.save();
       res.status(200).json(battle);
     }
