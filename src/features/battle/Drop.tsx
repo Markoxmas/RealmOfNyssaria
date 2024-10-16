@@ -17,9 +17,11 @@ const bull = (
 export default function Drop({
   name,
   amount,
+  icon,
 }: {
   name: string;
   amount: number;
+  icon: string;
 }) {
   return (
     <Card
@@ -33,6 +35,7 @@ export default function Drop({
       }}
     >
       <div>{name}</div>
+      <img src={icon} width={60} height={60} />
       <div>{amount}</div>
     </Card>
   );

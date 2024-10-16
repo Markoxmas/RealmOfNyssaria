@@ -2,6 +2,7 @@ import { Box, Paper } from "@mui/material";
 import { Sacrifice, openStarUpModal } from "./upgradeSlice";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { AVATARS } from "../../assets/avatars";
+import { ICONS } from "../../assets/icons";
 import { Hero } from "../heroes/heroesSlice";
 import StarRateIcon from "@mui/icons-material/StarRate";
 
@@ -60,10 +61,24 @@ export default function StarUpSlot({
               src={AVATARS[hero.image]}
               width={80}
               height={80}
-              style={{ borderRadius: "100px", marginTop: "5px" }}
+              style={{
+                borderRadius: "100px",
+                marginTop: "5px",
+                opacity:
+                  chosenSacrifices[slot].length === sacrifice.amount ? 1 : 0.4,
+              }}
             />
           ) : (
-            <></>
+            <img
+              src={ICONS.HeroIcon}
+              width={60}
+              height={60}
+              style={{
+                margin: 10,
+                opacity:
+                  chosenSacrifices[slot].length === sacrifice.amount ? 1 : 0.4,
+              }}
+            />
           )}
           <div>{renderStars(hero)}</div>
           <div>

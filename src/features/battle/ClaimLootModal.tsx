@@ -11,6 +11,8 @@ import {
   Battle,
 } from "./battleSlice";
 import Drop from "./Drop";
+import { ICONS } from "../../assets/icons";
+import capitalizeFirstLetter from "./lib/capitalizeFirstLetter";
 
 const style = {
   position: "absolute",
@@ -64,7 +66,13 @@ export default function ClaimLootModal() {
             </div>
             <div style={{ display: "flex" }}>
               {Object.keys(drops).map((drop) => {
-                return <Drop name={drop} amount={drops[drop]} />;
+                return (
+                  <Drop
+                    name={drop}
+                    amount={drops[drop]}
+                    icon={ICONS[capitalizeFirstLetter(drop)]}
+                  />
+                );
               })}
             </div>
           </Box>
