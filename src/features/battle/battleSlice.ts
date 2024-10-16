@@ -14,11 +14,17 @@ export type Battle = {
   battleMilestones: BattleMilestone[];
 };
 
+export type Drops = {
+  [key: string]: number;
+};
+
 export interface BattleState {
   battle: Battle;
   battleModalOpen: boolean;
   modalBattleHeroes: Hero[];
   modalAvailableHeroes: Hero[];
+  dropsModalOpen: boolean;
+  drops: Drops;
 }
 
 const initialState: BattleState = {
@@ -29,6 +35,11 @@ const initialState: BattleState = {
   battleModalOpen: false,
   modalBattleHeroes: [],
   modalAvailableHeroes: [],
+  dropsModalOpen: false,
+  drops: {
+    gold: 0,
+    scrollOfSummon: 0,
+  },
 };
 
 export const fetchBattle = createAsyncThunk("battle/fetchBattle", async () => {
@@ -48,6 +59,22 @@ export const updateBattleHeroes = createAsyncThunk(
     const response = await axios.patch(`/api/battle/update/${battle_id}`, {
       heroes_ids,
     });
+    return response.data;
+  }
+);
+
+export const claimLoot = createAsyncThunk(
+  "battle/claimLoot",
+  async ({
+    battle_id,
+    inventory_id,
+  }: {
+    battle_id: string;
+    inventory_id: string;
+  }) => {
+    const response = await axios.patch(
+      `/api/battle/claim/${battle_id}/${inventory_id}`
+    );
     return response.data;
   }
 );
@@ -85,6 +112,12 @@ export const battleSlice = createSlice({
         action.payload,
       ];
     },
+    openDropsModal: (state) => {
+      state.dropsModalOpen = true;
+    },
+    closeDropsModal: (state) => {
+      state.dropsModalOpen = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -96,6 +129,17 @@ export const battleSlice = createSlice({
       })
       .addCase(updateBattleHeroes.fulfilled, (state, action) => {
         state.battle = action.payload;
+      })
+      .addCase(updateBattleHeroes.rejected, (state, action) => {
+        console.log(action.error.message);
+      })
+      .addCase(claimLoot.fulfilled, (state, action) => {
+        state.battle = action.payload.battle;
+        state.drops.gold = action.payload.drops.gold;
+        state.drops.scrollOfSummon = action.payload.drops.scroll_of_summon;
+      })
+      .addCase(claimLoot.rejected, (state, action) => {
+        console.log(action.error.message);
       });
   },
 });
@@ -107,6 +151,8 @@ export const {
   initModalAvailableHeroes,
   addHeroToBattle,
   removeHeroFromBattle,
+  openDropsModal,
+  closeDropsModal,
 } = battleSlice.actions;
 
 export default battleSlice.reducer;

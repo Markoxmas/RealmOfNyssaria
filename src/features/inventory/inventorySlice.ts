@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { summonHeroes } from "../summon/summonSlice";
 import { levelUp } from "../upgrade/upgradeSlice";
+import { claimLoot } from "../battle/battleSlice";
 
 export type Inventory = {
   _id: string;
@@ -11,13 +12,13 @@ export type Inventory = {
 };
 
 export interface InventoryState {
-  id: string;
+  _id: string;
   scrollOfSummon: number;
   gold: number;
 }
 
 const initialState: InventoryState = {
-  id: "",
+  _id: "",
   scrollOfSummon: 0,
   gold: 0,
 };
@@ -38,7 +39,7 @@ const inventorySlice = createSlice({
     builder
       .addCase(getInventory.fulfilled, (state, action) => {
         if (action.payload[0]) {
-          state.id = action.payload[0]._id;
+          state._id = action.payload[0]._id;
           state.scrollOfSummon = action.payload[0].scroll_of_summon;
           state.gold = action.payload[0].gold;
         }
@@ -51,6 +52,10 @@ const inventorySlice = createSlice({
       })
       .addCase(levelUp.fulfilled, (state, action) => {
         state.gold = action.payload.inventory.gold;
+      })
+      .addCase(claimLoot.fulfilled, (state, action) => {
+        state.gold = action.payload.inventory.gold;
+        state.scrollOfSummon = action.payload.inventory.scroll_of_summon;
       });
   },
 });

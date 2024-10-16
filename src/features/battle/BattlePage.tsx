@@ -4,6 +4,7 @@ import { useAppDispatch } from "../../app/hooks";
 import BattleTimer from "./BattleTimer";
 import BattleHeroes from "./BattleHeroes";
 import BattleModal from "./BattleModal";
+import ClaimLootModal from "./ClaimLootModal";
 import { Button } from "@mui/material";
 import { openBattleModal } from "./battleSlice";
 
@@ -28,7 +29,7 @@ export default function BattlePage() {
         Modify heroes
       </Button>
       <BattleModal />
-      <Button variant="contained">Claim loot</Button>
+      <ClaimLootModal />
     </div>
   );
 }

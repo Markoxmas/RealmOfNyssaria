@@ -64,7 +64,7 @@ export default function LevelUp() {
         levelUpAction({
           heroId: hero._id,
           amount,
-          inventoryId: inventory.id,
+          inventoryId: inventory._id,
         })
       );
     }
