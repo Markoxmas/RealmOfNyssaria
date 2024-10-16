@@ -8,7 +8,7 @@ export default function getAvailableHeroes(heroes: Hero[], battle: Battle) {
       ? battle.battleMilestones[battle.battleMilestones.length - 1].heroes
       : [];
   const heroesOutsideBattle = heroes.filter(
-    (hero) => !heroesInBattle.includes(hero)
+    (hero) => !heroesInBattle.some((battleHero) => battleHero._id === hero._id)
   );
 
   return heroesOutsideBattle;
