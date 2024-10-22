@@ -4,12 +4,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
-import {
-  openDropsModal,
-  closeDropsModal,
-  claimLoot,
-  Battle,
-} from "./battleSlice";
+import { openDropsModal, closeDropsModal, claimLoot } from "./battleSlice";
 import Drop from "./Drop";
 import { ICONS } from "../../assets/icons";
 import capitalizeFirstLetter from "./lib/capitalizeFirstLetter";
@@ -64,7 +59,7 @@ export default function ClaimLootModal() {
             <div>
               <b>Congratulations! You've claimed:</b>
             </div>
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", margin: 20 }}>
               {Object.keys(drops).map((drop) => {
                 return (
                   <Drop
@@ -75,6 +70,7 @@ export default function ClaimLootModal() {
                 );
               })}
             </div>
+            <Button variant="contained">Claim</Button>
           </Box>
         </Fade>
       </Modal>
