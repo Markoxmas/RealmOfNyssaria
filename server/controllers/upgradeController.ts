@@ -5,6 +5,7 @@ import { calculateLevelUpCost } from "../lib/calculateLevelUpCost";
 import { calculateCp } from "../lib/calculateCp";
 import { serverConfig } from "../serverConfig";
 import { areSacrificesFulfilled } from "../lib/areSacrificesFulfilled";
+import { inventoryLib } from "../lib/inventoryLib";
 
 export const levelUp = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -25,22 +26,34 @@ export const levelUp = async (req: Request, res: Response): Promise<void> => {
 
     const costOfUpgrade = calculateLevelUpCost(hero, amount);
     const { star_max_level } = serverConfig.upgrade;
-    if (inventory.gold < costOfUpgrade) {
+
+    if (!inventoryLib.hasSufficientGold(inventory, costOfUpgrade)) {
       res.status(400).json({ error: "Not enough gold" });
       return;
     } else if (hero.level + amount > star_max_level[hero.stars - 1]) {
       res.status(400).json({ error: "Hero level cannot exceed max level" });
       return;
     } else {
-      inventory.gold -= costOfUpgrade;
+      await Inventory.findByIdAndUpdate(
+        inventoryId,
+        {
+          $inc: {
+            "items.$[elem].quantity": -costOfUpgrade,
+          },
+        },
+        {
+          arrayFilters: [{ "elem.id": 1 }],
+        }
+      );
       hero.level += amount;
       hero.cp = calculateCp(hero);
 
-      await inventory.save();
       await hero.save();
     }
 
-    res.status(200).json({ hero, inventory });
+    const updatedInventory = await Inventory.findById(inventoryId);
+
+    res.status(200).json({ hero, inventory: updatedInventory });
   } catch (error) {
     console.error("Error leveling up", error);
     res.status(500).json({ error: "Failed to level up the hero" });

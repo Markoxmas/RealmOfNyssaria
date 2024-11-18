@@ -12,11 +12,16 @@ export const summonHeroes = async (
 
     const inventories: Array<IInventory> = await Inventory.find();
     const firstInventory = inventories[0];
-    if (firstInventory.scroll_of_summon < amount) {
+
+    // Find the index of the "Scroll of Summon" item in the inventory
+    const itemIndex = firstInventory.items.findIndex((item) => item.id === 2);
+
+    if (itemIndex === -1 || firstInventory.items[itemIndex].quantity < amount) {
       res.status(400).json({ error: "Not enough scrolls of summon" });
       return;
     } else {
-      firstInventory.scroll_of_summon -= amount;
+      // Deduct the amount from the item's quantity
+      firstInventory.items[itemIndex].quantity -= amount;
     }
 
     const summonedHeroes = summonHeroesHelper(amount);
@@ -27,14 +32,13 @@ export const summonHeroes = async (
       const savedHero = await newHero.save();
       savedHeroes.push(savedHero);
     }
+
     await firstInventory.save();
 
-    res
-      .status(201)
-      .json({
-        summonedHeroes: savedHeroes,
-        scrollOfSummon: firstInventory.scroll_of_summon,
-      });
+    res.status(201).json({
+      summonedHeroes: savedHeroes,
+      scrollOfSummon: firstInventory.items[itemIndex].quantity,
+    });
   } catch (error) {
     console.error("Error summoning heroes:", error);
     res.status(500).json({ error: "Failed to summon heroes" });

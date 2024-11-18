@@ -1,13 +1,12 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { Item } from "../types/Item";
 
 export interface IInventory extends Document {
-  scroll_of_summon: number;
-  gold: number;
+  items: Item[];
 }
 
 const InventorySchema: Schema = new Schema({
-  scroll_of_summon: { type: Number, required: true },
-  gold: { type: Number, required: true },
+  items: { type: Array, required: true },
 });
 
 const Inventory = mongoose.model<IInventory>("Inventory", InventorySchema);

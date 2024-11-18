@@ -138,15 +138,24 @@ export const claimBattleLoot = async (
 
     const drops = getDrops(battle.battleMilestones);
 
-    //Get inventory by id
-    const inventory = await Inventory.findById(inventoryId);
-    if (!inventory) {
+    const updatedInventory = await Inventory.findOneAndUpdate(
+      { _id: inventoryId },
+      {
+        $inc: {
+          "items.$[item1].quantity": drops.gold,
+          "items.$[item2].quantity": drops.scroll_of_summon,
+        },
+      },
+      {
+        arrayFilters: [{ "item1.id": 1 }, { "item2.id": 2 }],
+        new: true,
+      }
+    );
+
+    if (!updatedInventory) {
       res.status(404).json({ error: "Inventory not found" });
       return;
     }
-
-    inventory.gold += drops.gold;
-    inventory.scroll_of_summon += drops.scroll_of_summon;
 
     battle.battleMilestones = [
       {
@@ -158,7 +167,7 @@ export const claimBattleLoot = async (
     ];
 
     await battle.save();
-    res.status(200).json({ battle, drops, inventory });
+    res.status(200).json({ battle, drops, inventory: updatedInventory });
   } catch (error) {
     console.error("Error claiming battle loot:", error);
     res.status(500).json({ error: "Internal server error" });

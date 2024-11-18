@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Inventory, { IInventory } from "../models/Inventory";
 import { Inventory as InventoryType } from "../types/Inventory";
+import { getInitialItems } from "../lib/getInitialItems";
 
 export const getAllInventories = async (
   req: Request,
@@ -22,8 +23,7 @@ export const initializeInventory = async (
 ): Promise<void> => {
   try {
     const newInventory: InventoryType = {
-      scroll_of_summon: 1000,
-      gold: 250000,
+      items: getInitialItems(),
     };
 
     const createdInventory = await Inventory.create(newInventory);

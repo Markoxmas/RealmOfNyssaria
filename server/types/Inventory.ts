@@ -1,4 +1,5 @@
+import { Item } from "./Item";
+
 export type Inventory = {
-  scroll_of_summon: number;
-  gold: number;
+  items: Item[];
 };
