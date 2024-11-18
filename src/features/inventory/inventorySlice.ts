@@ -5,22 +5,21 @@ import { summonHeroes } from "../summon/summonSlice";
 import { levelUp } from "../upgrade/upgradeSlice";
 import { claimLoot } from "../battle/battleSlice";
 
-export type Inventory = {
-  _id: string;
-  scroll_of_summon: number;
-  gold: number;
+export type Item = {
+  id: number;
+  name: string;
+  image: string;
+  quantity: number;
 };
 
 export interface InventoryState {
   _id: string;
-  scrollOfSummon: number;
-  gold: number;
+  items: Item[];
 }
 
 const initialState: InventoryState = {
   _id: "",
-  scrollOfSummon: 0,
-  gold: 0,
+  items: [],
 };
 
 export const getInventory = createAsyncThunk(
@@ -40,22 +39,29 @@ const inventorySlice = createSlice({
       .addCase(getInventory.fulfilled, (state, action) => {
         if (action.payload[0]) {
           state._id = action.payload[0]._id;
-          state.scrollOfSummon = action.payload[0].scroll_of_summon;
-          state.gold = action.payload[0].gold;
+          state.items = action.payload[0].items;
         }
       })
       .addCase(getInventory.rejected, (state, action) => {
         console.log(action.error.message);
       })
       .addCase(summonHeroes.fulfilled, (state, action) => {
-        state.scrollOfSummon = action.payload.scrollOfSummon;
+        state.items = state.items.map((item) => {
+          if (item.id === 2) {
+            return {
+              ...item,
+              quantity: action.payload.scrollOfSummon,
+            };
+          } else {
+            return item;
+          }
+        });
       })
       .addCase(levelUp.fulfilled, (state, action) => {
-        state.gold = action.payload.inventory.gold;
+        state.items = action.payload.inventory.items;
       })
       .addCase(claimLoot.fulfilled, (state, action) => {
-        state.gold = action.payload.inventory.gold;
-        state.scrollOfSummon = action.payload.inventory.scroll_of_summon;
+        state.items = action.payload.inventory.items;
       });
   },
 });

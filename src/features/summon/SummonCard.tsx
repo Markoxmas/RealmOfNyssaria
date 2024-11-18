@@ -8,9 +8,8 @@ import { summonHeroes } from "./summonSlice";
 
 export default function SummonCard() {
   const dispatch = useAppDispatch();
-  const scrollOfSummon = useAppSelector(
-    (state) => state.inventory.scrollOfSummon
-  );
+  const items = useAppSelector((state) => state.inventory.items);
+  const scrollOfSummon = items.find((item) => item.id === 2);
   return (
     <Card
       sx={{
@@ -27,21 +26,21 @@ export default function SummonCard() {
           Summon heroes
         </Typography>
         <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          Scrolls of summon: {scrollOfSummon}
+          Scrolls of summon: {scrollOfSummon?.quantity}
         </Typography>
       </CardContent>
       <CardActions>
         <Button
           size="small"
           onClick={() => dispatch(summonHeroes(1))}
-          disabled={scrollOfSummon < 1}
+          disabled={scrollOfSummon && scrollOfSummon.quantity < 1}
         >
           Summon 1
         </Button>
         <Button
           size="small"
           onClick={() => dispatch(summonHeroes(10))}
-          disabled={scrollOfSummon < 10}
+          disabled={scrollOfSummon && scrollOfSummon.quantity < 10}
         >
           Summon 10
         </Button>

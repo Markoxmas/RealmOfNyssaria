@@ -7,13 +7,13 @@ import { useEffect, useState } from "react";
 
 export const maxLevelUpAmount = (
   hero: Hero | null,
-  inventory: InventoryState,
+  gold: number,
   upgradeInfo: UpgradeInfo
 ) => {
   if (hero === null) {
     return;
   }
-  const gold = inventory.gold;
+
   let requiredGold = {
     one: 0,
     ten: 0,
@@ -49,13 +49,15 @@ export default function LevelUp() {
   const dispatch = useAppDispatch();
   const hero = useAppSelector((state) => state.upgrade.hero);
   const inventory = useAppSelector((state) => state.inventory);
+  const inventoryItems = inventory.items;
   const upgradeInfo = useAppSelector((state) => state.upgrade.upgradeInfo);
+  const gold = inventoryItems.find((item) => item.id === 1)?.quantity || 0;
   const [levelUpInfo, setLevelUpInfo] = useState(
-    maxLevelUpAmount(hero, inventory, upgradeInfo)
+    maxLevelUpAmount(hero, gold, upgradeInfo)
   );
 
   useEffect(() => {
-    setLevelUpInfo(maxLevelUpAmount(hero, inventory, upgradeInfo));
+    setLevelUpInfo(maxLevelUpAmount(hero, gold, upgradeInfo));
   }, [hero?.level]);
 
   const levelUp = (amount: number) => {
@@ -80,7 +82,7 @@ export default function LevelUp() {
         gap: "5px",
       }}
     >
-      <div>You have {inventory.gold} gold</div>
+      <div>You have {gold} gold</div>
       {levelUpInfo && levelUpInfo.finalLevelUpAmount > 1 && (
         <Button variant="contained" onClick={() => levelUp(1)}>
           Level up 1 ({levelUpInfo?.requiredGold.one} gold)
