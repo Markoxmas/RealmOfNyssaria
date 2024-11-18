@@ -70,7 +70,12 @@ export default function ClaimLootModal() {
                 );
               })}
             </div>
-            <Button variant="contained">Claim</Button>
+            <Button
+              variant="contained"
+              onClick={() => dispatch(closeDropsModal())}
+            >
+              Claim
+            </Button>
           </Box>
         </Fade>
       </Modal>

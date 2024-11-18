@@ -15,8 +15,8 @@ const initialState: SummonState = {
 
 export const summonHeroes = createAsyncThunk(
   "summon/summonHeroes",
-  async (amount: number) => {
-    const response = await axios.post(`/api/summon/${amount}`);
+  async ({ inventoryId, amount }: { inventoryId: string; amount: number }) => {
+    const response = await axios.post(`/api/summon/${inventoryId}/${amount}`);
     return response.data;
   }
 );

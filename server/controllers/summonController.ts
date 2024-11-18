@@ -8,21 +8,36 @@ export const summonHeroes = async (
   res: Response
 ): Promise<void> => {
   try {
+    const inventoryId = req.params.inventoryId;
     const amount = Number(req.params.amount);
 
-    const inventories: Array<IInventory> = await Inventory.find();
-    const firstInventory = inventories[0];
+    const inventory = await Inventory.findById(inventoryId);
+    if (!inventory) {
+      res.status(404).json({ error: "Inventory not found" });
+      return;
+    }
 
-    // Find the index of the "Scroll of Summon" item in the inventory
-    const itemIndex = firstInventory.items.findIndex((item) => item.id === 2);
+    // Check if the "Scroll of Summon" exists and if there's enough quantity
+    const hasSufficientScrolls = inventory.items.some(
+      (item) => item.id === 2 && item.quantity >= amount
+    );
 
-    if (itemIndex === -1 || firstInventory.items[itemIndex].quantity < amount) {
+    if (!hasSufficientScrolls) {
       res.status(400).json({ error: "Not enough scrolls of summon" });
       return;
-    } else {
-      // Deduct the amount from the item's quantity
-      firstInventory.items[itemIndex].quantity -= amount;
     }
+
+    // Update the quantity of "Scroll of Summon" in the inventory
+    await Inventory.findByIdAndUpdate(
+      inventoryId,
+      {
+        $inc: { "items.$[elem].quantity": -amount },
+      },
+      {
+        arrayFilters: [{ "elem.id": 2 }],
+        new: true,
+      }
+    );
 
     const summonedHeroes = summonHeroesHelper(amount);
 
@@ -33,11 +48,13 @@ export const summonHeroes = async (
       savedHeroes.push(savedHero);
     }
 
-    await firstInventory.save();
+    // Send the response with the summoned heroes and updated scroll quantity
+    const updatedInventory = await Inventory.findById(inventoryId);
 
     res.status(201).json({
       summonedHeroes: savedHeroes,
-      scrollOfSummon: firstInventory.items[itemIndex].quantity,
+      scrollOfSummon: updatedInventory?.items.find((item) => item.id === 2)
+        ?.quantity,
     });
   } catch (error) {
     console.error("Error summoning heroes:", error);

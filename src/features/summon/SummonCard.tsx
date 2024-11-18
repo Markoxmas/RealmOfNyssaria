@@ -8,8 +8,9 @@ import { summonHeroes } from "./summonSlice";
 
 export default function SummonCard() {
   const dispatch = useAppDispatch();
-  const items = useAppSelector((state) => state.inventory.items);
-  const scrollOfSummon = items.find((item) => item.id === 2);
+  const inventory = useAppSelector((state) => state.inventory);
+  const inventoryItems = inventory.items;
+  const scrollOfSummon = inventoryItems.find((item) => item.id === 2);
   return (
     <Card
       sx={{
@@ -32,14 +33,18 @@ export default function SummonCard() {
       <CardActions>
         <Button
           size="small"
-          onClick={() => dispatch(summonHeroes(1))}
+          onClick={() =>
+            dispatch(summonHeroes({ inventoryId: inventory._id, amount: 1 }))
+          }
           disabled={scrollOfSummon && scrollOfSummon.quantity < 1}
         >
           Summon 1
         </Button>
         <Button
           size="small"
-          onClick={() => dispatch(summonHeroes(10))}
+          onClick={() =>
+            dispatch(summonHeroes({ inventoryId: inventory._id, amount: 10 }))
+          }
           disabled={scrollOfSummon && scrollOfSummon.quantity < 10}
         >
           Summon 10
