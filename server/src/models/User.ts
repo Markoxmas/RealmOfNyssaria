@@ -5,6 +5,9 @@ export interface IUser extends Document {
   username: string;
   password: string;
   comparePassword: (enteredPassword: string) => boolean;
+  inventoryId: string;
+  battleId: string;
+  heroIds: string[];
 }
 
 const userSchema = new Schema<IUser>({
@@ -15,6 +18,18 @@ const userSchema = new Schema<IUser>({
   },
   password: {
     type: String,
+    required: true,
+  },
+  inventoryId: {
+    type: String,
+    required: true,
+  },
+  battleId: {
+    type: String,
+    required: true,
+  },
+  heroIds: {
+    type: [String],
     required: true,
   },
 });

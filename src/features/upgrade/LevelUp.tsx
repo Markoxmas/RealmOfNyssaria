@@ -1,7 +1,6 @@
 import { Button } from "@mui/material";
 import { UpgradeInfo, levelUp as levelUpAction } from "./upgradeSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { InventoryState } from "../inventory/inventorySlice";
 import { Hero } from "../heroes/heroesSlice";
 import { useEffect, useState } from "react";
 
@@ -66,7 +65,6 @@ export default function LevelUp() {
         levelUpAction({
           heroId: hero._id,
           amount,
-          inventoryId: inventory._id,
         })
       );
     }

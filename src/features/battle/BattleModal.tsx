@@ -57,12 +57,7 @@ export default function BattleModal() {
   }, [battleModalOpen]);
 
   const finishModifyingHeroes = () => {
-    dispatch(
-      updateBattleHeroes({
-        heroes_ids: modalBattleHeroes.map((hero) => hero._id),
-        battle_id: battle._id,
-      })
-    );
+    dispatch(updateBattleHeroes(modalBattleHeroes.map((hero) => hero._id)));
     dispatch(closeBattleModal());
   };
 

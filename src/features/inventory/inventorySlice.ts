@@ -13,12 +13,10 @@ export type Item = {
 };
 
 export interface InventoryState {
-  _id: string;
   items: Item[];
 }
 
 const initialState: InventoryState = {
-  _id: "",
   items: [],
 };
 
@@ -37,10 +35,7 @@ const inventorySlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getInventory.fulfilled, (state, action) => {
-        if (action.payload[0]) {
-          state._id = action.payload[0]._id;
-          state.items = action.payload[0].items;
-        }
+        state.items = action.payload.items;
       })
       .addCase(getInventory.rejected, (state, action) => {
         console.log(action.error.message);

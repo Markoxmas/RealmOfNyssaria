@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
-import helmet from "helmet";
 import heroRoutes from "./src/routes/heroRoutes";
 import summonRoutes from "./src/routes/summonRoutes";
 import inventoryRoutes from "./src/routes/inventoryRoutes";
@@ -53,7 +52,7 @@ db.once("open", () => {
 
 app.use("/api/auth", authRoutes);
 
-app.use("/api/users", authenticate, userRoutes);
+app.use("/api/user", authenticate, userRoutes);
 app.use("/api/heroes", authenticate, heroRoutes);
 app.use("/api/summon", authenticate, summonRoutes);
 app.use("/api/inventory", authenticate, inventoryRoutes);

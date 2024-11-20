@@ -1,21 +1,17 @@
 import express, { Router } from "express";
 import {
-  initializeBattle,
   getAllBattles,
   getBattleById,
   updateBattle,
-  deleteAllBattles,
   claimBattleLoot,
 } from "../controllers/battleController";
 
 const router: Router = express.Router();
 
-router.post("/", initializeBattle);
 router.get("/", getAllBattles);
 router.get("/:battleId", getBattleById);
-router.patch("/update/:battleId", updateBattle); // body: heroes_ids string[]
-router.delete("/", deleteAllBattles);
+router.patch("/update", updateBattle); // body: heroes_ids string[]
 
-router.patch("/claim/:battleId/:inventoryId", claimBattleLoot);
+router.patch("/claim", claimBattleLoot);
 
 export default router;

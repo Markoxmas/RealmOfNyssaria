@@ -5,31 +5,36 @@ import Inventory from "../models/Inventory";
 import { serverConfig } from "../serverConfig";
 import { calculateMonsterHp } from "../lib/calculateMonsterHp";
 import { getDrops } from "../lib/getDrops";
-
-export const initializeBattle = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const newBattle = new Battle({
-      battleMilestones: [],
-    });
-
-    await newBattle.save();
-    res.status(201).json(newBattle);
-  } catch (error) {
-    console.error("Error initializing battle:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
+import User from "../models/User";
 
 export const getAllBattles = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const battles = await Battle.find();
-    res.json(battles);
+    const userId = req.user?._id;
+
+    if (userId) {
+      const user = await User.findById(userId);
+
+      if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      const { battleId } = user;
+
+      const battle = await Battle.findById(battleId);
+
+      if (!battle) {
+        res.status(404).json({ error: "Battle not found" });
+        return;
+      }
+
+      res.status(200).json(battle);
+    } else {
+      res.status(401).json({ error: "Unauthorized" });
+    }
   } catch (error) {
     console.error("Error fetching battles:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -58,60 +63,60 @@ export const updateBattle = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { battleId } = req.params;
     const { heroes_ids } = req.body;
+    const userId = req.user?._id;
 
-    const heroes = await Hero.find({ _id: { $in: heroes_ids } });
-    if (heroes.length !== heroes_ids.length) {
-      res.status(400).json({ error: "Some heroes were not found" });
-      return;
-    }
-    const collective_cp = heroes.reduce((acc, hero) => acc + hero.cp, 0);
+    if (userId) {
+      const user = await User.findById(userId);
 
-    const battle = await Battle.findById(battleId);
-    if (!battle) {
-      res.status(404).json({ error: "Battle not found" });
-      return;
-    }
+      if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
 
-    if (battle.battleMilestones.length === 0) {
-      const { max_monster_hp } = serverConfig.battle;
+      const { battleId } = user;
 
-      battle.battleMilestones.push({
-        monster_hp: max_monster_hp,
-        start_time: Date.now(),
-        collective_cp,
-        heroes,
-      });
+      const heroes = await Hero.find({ _id: { $in: heroes_ids } });
+      if (heroes.length !== heroes_ids.length) {
+        res.status(400).json({ error: "Some heroes were not found" });
+        return;
+      }
+      const collective_cp = heroes.reduce((acc, hero) => acc + hero.cp, 0);
 
-      await battle.save();
-      res.status(201).json(battle);
+      const battle = await Battle.findById(battleId);
+      if (!battle) {
+        res.status(404).json({ error: "Battle not found" });
+        return;
+      }
+
+      if (battle.battleMilestones.length === 0) {
+        const { max_monster_hp } = serverConfig.battle;
+
+        battle.battleMilestones.push({
+          monster_hp: max_monster_hp,
+          start_time: Date.now(),
+          collective_cp,
+          heroes,
+        });
+
+        await battle.save();
+        res.status(201).json(battle);
+      } else {
+        battle.battleMilestones.push({
+          monster_hp: calculateMonsterHp(battle.battleMilestones),
+          start_time: Date.now(),
+          collective_cp,
+          heroes,
+        });
+
+        await battle.save();
+        res.status(200).json(battle);
+      }
     } else {
-      battle.battleMilestones.push({
-        monster_hp: calculateMonsterHp(battle.battleMilestones),
-        start_time: Date.now(),
-        collective_cp,
-        heroes,
-      });
-
-      await battle.save();
-      res.status(200).json(battle);
+      res.status(401).json({ error: "Unauthorized" });
     }
   } catch (error) {
     console.error("Error updating battle:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-export const deleteAllBattles = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    await Battle.deleteMany({});
-    res.status(204).end();
-  } catch (error) {
-    console.error("Error deleting battles:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -121,53 +126,66 @@ export const claimBattleLoot = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { battleId, inventoryId } = req.params;
+    const userId = req.user?._id;
 
-    const battle = await Battle.findById(battleId);
-    if (!battle) {
-      res.status(404).json({ error: "Battle not found" });
-      return;
-    }
-    if (!battle.battleMilestones.length) {
-      res.status(400).json({ error: "No battle milestones to claim" });
-      return;
-    }
+    if (userId) {
+      const user = await User.findById(userId);
 
-    const heroes =
-      battle.battleMilestones[battle.battleMilestones.length - 1].heroes;
-
-    const drops = getDrops(battle.battleMilestones);
-
-    const updatedInventory = await Inventory.findOneAndUpdate(
-      { _id: inventoryId },
-      {
-        $inc: {
-          "items.$[item1].quantity": drops.gold,
-          "items.$[item2].quantity": drops.scroll_of_summon,
-        },
-      },
-      {
-        arrayFilters: [{ "item1.id": 1 }, { "item2.id": 2 }],
-        new: true,
+      if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
       }
-    );
 
-    if (!updatedInventory) {
-      res.status(404).json({ error: "Inventory not found" });
-      return;
+      const { battleId, inventoryId } = user;
+
+      const battle = await Battle.findById(battleId);
+      if (!battle) {
+        res.status(404).json({ error: "Battle not found" });
+        return;
+      }
+      if (!battle.battleMilestones.length) {
+        res.status(400).json({ error: "No battle milestones to claim" });
+        return;
+      }
+
+      const heroes =
+        battle.battleMilestones[battle.battleMilestones.length - 1].heroes;
+
+      const drops = getDrops(battle.battleMilestones);
+
+      const updatedInventory = await Inventory.findOneAndUpdate(
+        { _id: inventoryId },
+        {
+          $inc: {
+            "items.$[item1].quantity": drops.gold,
+            "items.$[item2].quantity": drops.scroll_of_summon,
+          },
+        },
+        {
+          arrayFilters: [{ "item1.id": 1 }, { "item2.id": 2 }],
+          new: true,
+        }
+      );
+
+      if (!updatedInventory) {
+        res.status(404).json({ error: "Inventory not found" });
+        return;
+      }
+
+      battle.battleMilestones = [
+        {
+          monster_hp: calculateMonsterHp(battle.battleMilestones),
+          start_time: Date.now(),
+          collective_cp: heroes.reduce((acc, hero) => acc + hero.cp, 0),
+          heroes,
+        },
+      ];
+
+      await battle.save();
+      res.status(200).json({ battle, drops, inventory: updatedInventory });
+    } else {
+      res.status(401).json({ error: "Unauthorized" });
     }
-
-    battle.battleMilestones = [
-      {
-        monster_hp: calculateMonsterHp(battle.battleMilestones),
-        start_time: Date.now(),
-        collective_cp: heroes.reduce((acc, hero) => acc + hero.cp, 0),
-        heroes,
-      },
-    ];
-
-    await battle.save();
-    res.status(200).json({ battle, drops, inventory: updatedInventory });
   } catch (error) {
     console.error("Error claiming battle loot:", error);
     res.status(500).json({ error: "Internal server error" });

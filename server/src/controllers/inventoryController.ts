@@ -1,49 +1,30 @@
 import { Request, Response } from "express";
-import Inventory, { IInventory } from "../models/Inventory";
-import { Inventory as InventoryType } from "../types/Inventory";
-import { getInitialItems } from "../lib/getInitialItems";
+import Inventory from "../models/Inventory";
+import User from "../models/User";
 
-export const getAllInventories = async (
+export const getInventory = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const inventories: Array<IInventory> = await Inventory.find();
+    const userId = req.user?._id;
 
-    res.status(200).json(inventories);
+    if (userId) {
+      const user = await User.findById(userId);
+
+      if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      let inventory = await Inventory.findById(user.inventoryId);
+
+      res.status(200).json(inventory);
+    } else {
+      res.status(401).json({ error: "Unauthorized" });
+    }
   } catch (error) {
     console.error("Error retrieving inventories:", error);
     res.status(500).json({ error: "Failed to retrieve inventories" });
-  }
-};
-
-export const initializeInventory = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const newInventory: InventoryType = {
-      items: getInitialItems(),
-    };
-
-    const createdInventory = await Inventory.create(newInventory);
-
-    res.status(201).json(createdInventory);
-  } catch (error) {
-    console.error("Error initializing inventory:", error);
-    res.status(500).json({ error: "Failed to initialize inventory" });
-  }
-};
-
-export const deleteAllInventories = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    await Inventory.deleteMany({});
-    res.status(204).end();
-  } catch (error) {
-    console.error("Error deleting inventories:", error);
-    res.status(500).json({ error: "Internal server error" });
   }
 };

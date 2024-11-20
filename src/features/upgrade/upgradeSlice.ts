@@ -47,17 +47,10 @@ export const selectHero = createAsyncThunk(
 
 export const levelUp = createAsyncThunk(
   "upgrade/levelUp",
-  async ({
-    heroId,
-    amount,
-    inventoryId,
-  }: {
-    heroId: string;
-    amount: number;
-    inventoryId: string;
-  }) => {
+  async ({ heroId, amount }: { heroId: string; amount: number }) => {
+    console.log("Marko", heroId, amount);
     const response = await axios.patch(
-      `/api/upgrade/levelup/${heroId}/${amount}/${inventoryId}`
+      `/api/upgrade/levelup/${heroId}/${amount}`
     );
     return response.data;
   }

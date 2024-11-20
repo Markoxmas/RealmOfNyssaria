@@ -33,18 +33,14 @@ export default function SummonCard() {
       <CardActions>
         <Button
           size="small"
-          onClick={() =>
-            dispatch(summonHeroes({ inventoryId: inventory._id, amount: 1 }))
-          }
+          onClick={() => dispatch(summonHeroes(1))}
           disabled={scrollOfSummon && scrollOfSummon.quantity < 1}
         >
           Summon 1
         </Button>
         <Button
           size="small"
-          onClick={() =>
-            dispatch(summonHeroes({ inventoryId: inventory._id, amount: 10 }))
-          }
+          onClick={() => dispatch(summonHeroes(10))}
           disabled={scrollOfSummon && scrollOfSummon.quantity < 10}
         >
           Summon 10

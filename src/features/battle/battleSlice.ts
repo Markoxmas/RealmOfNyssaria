@@ -10,7 +10,6 @@ export type BattleMilestone = {
 };
 
 export type Battle = {
-  _id: string;
   battleMilestones: BattleMilestone[];
 };
 
@@ -29,7 +28,6 @@ export interface BattleState {
 
 const initialState: BattleState = {
   battle: {
-    _id: "",
     battleMilestones: [],
   },
   battleModalOpen: false,
@@ -49,35 +47,18 @@ export const fetchBattle = createAsyncThunk("battle/fetchBattle", async () => {
 
 export const updateBattleHeroes = createAsyncThunk(
   "battle/updateBattleHeroes",
-  async ({
-    battle_id,
-    heroes_ids,
-  }: {
-    battle_id: string;
-    heroes_ids: string[];
-  }) => {
-    const response = await axios.patch(`/api/battle/update/${battle_id}`, {
+  async (heroes_ids: string[]) => {
+    const response = await axios.patch("/api/battle/update", {
       heroes_ids,
     });
     return response.data;
   }
 );
 
-export const claimLoot = createAsyncThunk(
-  "battle/claimLoot",
-  async ({
-    battle_id,
-    inventory_id,
-  }: {
-    battle_id: string;
-    inventory_id: string;
-  }) => {
-    const response = await axios.patch(
-      `/api/battle/claim/${battle_id}/${inventory_id}`
-    );
-    return response.data;
-  }
-);
+export const claimLoot = createAsyncThunk("battle/claimLoot", async () => {
+  const response = await axios.patch("/api/battle/claim");
+  return response.data;
+});
 
 export const battleSlice = createSlice({
   name: "battle",
@@ -122,7 +103,7 @@ export const battleSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchBattle.fulfilled, (state, action) => {
-        state.battle = action.payload[0];
+        state.battle = action.payload;
       })
       .addCase(fetchBattle.rejected, (state, action) => {
         console.log(action.error.message);

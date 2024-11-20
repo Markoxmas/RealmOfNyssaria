@@ -33,7 +33,7 @@ export default function ClaimLootModal() {
   const inventory = useAppSelector((state) => state.inventory);
 
   const onClaimLoot = () => {
-    dispatch(claimLoot({ battle_id: battle._id, inventory_id: inventory._id }));
+    dispatch(claimLoot());
     dispatch(openDropsModal());
   };
   return (

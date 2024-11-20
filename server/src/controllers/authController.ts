@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import { generateToken, clearToken } from "../lib/auth";
+import { v4 as uuidv4 } from "uuid";
+import Battle from "../models/Battle";
+import { Inventory as InventoryType } from "../types/Inventory";
+import { getInitialItems } from "../lib/getInitialItems";
+import Inventory from "../models/Inventory";
 
 const registerUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -10,10 +15,28 @@ const registerUser = async (req: Request, res: Response) => {
     res.status(400).json({ message: "The user already exists" });
   }
 
+  const inventoryId = uuidv4();
+  const battleId = uuidv4();
+  const heroIds = [] as string[];
+
   const user = await User.create({
     username,
     password,
+    inventoryId,
+    battleId,
+    heroIds,
   });
+
+  await Battle.create({
+    _id: battleId,
+    battleMilestones: [],
+  });
+
+  const newInventory: InventoryType = {
+    items: getInitialItems(),
+  };
+
+  await Inventory.create(newInventory);
 
   if (user) {
     generateToken(res, user._id as string);

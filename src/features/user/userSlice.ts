@@ -1,6 +1,5 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { ChangeEvent } from "react";
 
 export interface UserState {
   userId: string | null;
