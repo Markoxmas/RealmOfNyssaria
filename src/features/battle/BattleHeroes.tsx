@@ -21,7 +21,7 @@ export default function BattleHeroes() {
 
   return (
     <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
-      {battle?.battleMilestones?.length &&
+      {battle?.battleMilestones?.length ? (
         battle.battleMilestones[battle.battleMilestones.length - 1].heroes.map(
           (hero) => {
             return (
@@ -56,7 +56,10 @@ export default function BattleHeroes() {
               </Card>
             );
           }
-        )}
+        )
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
