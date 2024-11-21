@@ -9,6 +9,7 @@ import { Hero } from "../heroes/heroesSlice";
 import { AVATARS } from "../../assets/avatars";
 import StarRateIcon from "@mui/icons-material/StarRate";
 import { Dispatch } from "@reduxjs/toolkit";
+import getAvailableHeroes from "../battle/lib/getAvailableHeroes";
 
 function renderStars(hero: Hero) {
   let stars = [];
@@ -69,18 +70,19 @@ export default function StarUpModal() {
     hero: chosenHero,
   } = useAppSelector((state) => state.upgrade);
   const { heroes } = useAppSelector((state) => state.heroes);
+  const { battle } = useAppSelector((state) => state.battle);
   const currentSacrificesAmount =
     upgradeInfo.sacrifices[starUpModalSlot]?.amount;
   const numOfEmptySlots = currentSacrificesAmount
     ? currentSacrificesAmount - chosenSacrifices[starUpModalSlot].length
     : 0;
   const modalHeroes = upgradeInfo.sacrifices[starUpModalSlot]?.same
-    ? heroes.filter(
+    ? getAvailableHeroes(heroes, battle).filter(
         (hero) =>
           chosenHero?.name === hero.name &&
           hero.stars === upgradeInfo.sacrifices[starUpModalSlot]?.stars
       )
-    : heroes.filter(
+    : getAvailableHeroes(heroes, battle).filter(
         (hero) => hero.stars === upgradeInfo.sacrifices[starUpModalSlot]?.stars
       );
   const chosenHeroIds = chosenSacrifices[starUpModalSlot]
@@ -94,9 +96,6 @@ export default function StarUpModal() {
     dispatch(closeStarUpModal());
   };
 
-  const toggleSacrifice = (hero: Hero) => () => {
-    dispatch(toggleSacrificeChoice(hero));
-  };
   return (
     <div>
       <Modal

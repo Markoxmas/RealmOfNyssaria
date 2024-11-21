@@ -1,8 +1,9 @@
 import { Card, CardMedia } from "@mui/material";
-import { useAppSelector } from "../../app/hooks";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { Hero } from "../heroes/heroesSlice";
 import { AVATARS } from "../../assets/avatars";
 import StarRateIcon from "@mui/icons-material/StarRate";
+import { selectHero } from "../upgrade/upgradeSlice";
 
 function renderStars(hero: Hero) {
   let stars = [];
@@ -15,6 +16,7 @@ function renderStars(hero: Hero) {
 }
 
 export default function BattleHeroes() {
+  const dispatch = useAppDispatch();
   const { battle } = useAppSelector((state) => state.battle);
 
   return (
@@ -32,6 +34,7 @@ export default function BattleHeroes() {
                   borderRadius: "10px",
                   background: "rgba(218, 223, 225, 1)",
                 }}
+                onClick={() => dispatch(selectHero(hero))}
               >
                 <div>
                   <b>

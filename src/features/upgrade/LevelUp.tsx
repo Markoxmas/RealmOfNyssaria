@@ -3,6 +3,9 @@ import { UpgradeInfo, levelUp as levelUpAction } from "./upgradeSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Hero } from "../heroes/heroesSlice";
 import { useEffect, useState } from "react";
+import { updateBattleHeroes } from "../battle/battleSlice";
+import isHeroInBattle from "../battle/lib/isHeroInBattle";
+import getHeroesInBattle from "../battle/lib/getHeroesInBattle";
 
 export const maxLevelUpAmount = (
   hero: Hero | null,
@@ -54,6 +57,9 @@ export default function LevelUp() {
   const [levelUpInfo, setLevelUpInfo] = useState(
     maxLevelUpAmount(hero, gold, upgradeInfo)
   );
+  const { battle } = useAppSelector((state) => state.battle);
+  const [battleUpdateTimeout, setBattleUpdateTimeout] =
+    useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setLevelUpInfo(maxLevelUpAmount(hero, gold, upgradeInfo));
@@ -67,6 +73,20 @@ export default function LevelUp() {
           amount,
         })
       );
+      if (isHeroInBattle(battle, hero._id)) {
+        if (battleUpdateTimeout) {
+          clearTimeout(battleUpdateTimeout);
+        }
+        setBattleUpdateTimeout(
+          setTimeout(() => {
+            dispatch(
+              updateBattleHeroes(
+                getHeroesInBattle(battle).map((hero) => hero._id)
+              )
+            );
+          }, 3000)
+        );
+      }
     }
   };
 
