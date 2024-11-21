@@ -4,6 +4,8 @@ import StarUpModal from "./StarUpModal";
 import { Button } from "@mui/material";
 import { UpgradeInfo, starUp } from "./upgradeSlice";
 import { Hero } from "../heroes/heroesSlice";
+import { updateBattleHeroes } from "../battle/battleSlice";
+import getHeroesInBattle from "../battle/lib/getHeroesInBattle";
 
 function areSacrificesFulfilled(
   upgradeInfo: UpgradeInfo,
@@ -25,6 +27,7 @@ export default function StarUp() {
   const { upgradeInfo, chosenSacrifices, hero } = useAppSelector(
     (state) => state.upgrade
   );
+  const { battle } = useAppSelector((state) => state.battle);
 
   return (
     <div
@@ -49,6 +52,13 @@ export default function StarUp() {
                 sacrificeIds: chosenSacrifices.flat().map((hero) => hero._id),
               })
             );
+            setTimeout(() => {
+              dispatch(
+                updateBattleHeroes(
+                  getHeroesInBattle(battle).map((hero) => hero._id)
+                )
+              );
+            }, 2000);
           }
         }}
       >
