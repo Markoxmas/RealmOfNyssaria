@@ -1,9 +1,11 @@
-import { Card, CardMedia } from "@mui/material";
+import { Card, CardMedia, Paper } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { Hero } from "../heroes/heroesSlice";
 import { AVATARS } from "../../assets/avatars";
 import StarRateIcon from "@mui/icons-material/StarRate";
 import { selectHero } from "../upgrade/upgradeSlice";
+import getBattleSlots from "./lib/getBattleSlots";
+import { openBattleModal } from "./battleSlice";
 
 function renderStars(hero: Hero) {
   let stars = [];
@@ -20,10 +22,19 @@ export default function BattleHeroes() {
   const { battle } = useAppSelector((state) => state.battle);
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        marginTop: 20,
+        gap: "10px",
+      }}
+    >
       {battle?.battleMilestones?.length ? (
-        battle.battleMilestones[battle.battleMilestones.length - 1].heroes.map(
-          (hero) => {
+        getBattleSlots(
+          battle.battleMilestones[battle.battleMilestones.length - 1].heroes
+        ).map((hero) => {
+          if (hero !== null) {
             return (
               <Card
                 sx={{
@@ -55,8 +66,16 @@ export default function BattleHeroes() {
                 </div>
               </Card>
             );
+          } else {
+            return (
+              <Paper
+                elevation={3}
+                style={{ width: 170, height: 220 }}
+                onClick={() => dispatch(openBattleModal())}
+              ></Paper>
+            );
           }
-        )
+        })
       ) : (
         <></>
       )}

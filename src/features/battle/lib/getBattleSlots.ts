@@ -1,7 +1,8 @@
 import { Hero } from "../../heroes/heroesSlice";
-import { Battle } from "../battleSlice";
 
-export default function getBattleSlots(heroesInBattle: Hero[]) {
+export default function getBattleSlots(
+  heroesInBattle: Hero[]
+): Array<Hero | null> {
   const totalSlots = 5;
   const emptySlots = totalSlots - heroesInBattle.length;
 
