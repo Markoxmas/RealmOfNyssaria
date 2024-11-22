@@ -80,7 +80,7 @@ export default function BattleHeroes() {
                 }}
                 onClick={() => dispatch(openBattleModal())}
               >
-                <img src={ICONS["HeroIcon"]} width="100px" height="100px" />
+                <img src={ICONS["HeroIcon"]} width="80px" height="80px" />
               </Paper>
             );
           }
