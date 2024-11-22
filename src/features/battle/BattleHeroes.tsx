@@ -6,6 +6,7 @@ import StarRateIcon from "@mui/icons-material/StarRate";
 import { selectHero } from "../upgrade/upgradeSlice";
 import getBattleSlots from "./lib/getBattleSlots";
 import { openBattleModal } from "./battleSlice";
+import { ICONS } from "../../assets/icons";
 
 function renderStars(hero: Hero) {
   let stars = [];
@@ -70,9 +71,17 @@ export default function BattleHeroes() {
             return (
               <Paper
                 elevation={3}
-                style={{ width: 170, height: 220 }}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: 170,
+                  height: 220,
+                }}
                 onClick={() => dispatch(openBattleModal())}
-              ></Paper>
+              >
+                <img src={ICONS["HeroIcon"]} width="100px" height="100px" />
+              </Paper>
             );
           }
         })
