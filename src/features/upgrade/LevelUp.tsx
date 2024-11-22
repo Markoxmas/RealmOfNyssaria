@@ -51,13 +51,13 @@ export default function LevelUp() {
   const dispatch = useAppDispatch();
   const hero = useAppSelector((state) => state.upgrade.hero);
   const inventory = useAppSelector((state) => state.inventory);
-  const inventoryItems = inventory.items;
+  const { battle } = useAppSelector((state) => state.battle);
   const upgradeInfo = useAppSelector((state) => state.upgrade.upgradeInfo);
-  const gold = inventoryItems.find((item) => item.id === 1)?.quantity || 0;
+  const gold = inventory.items.find((item) => item.id === 1)?.quantity || 0;
   const [levelUpInfo, setLevelUpInfo] = useState(
     maxLevelUpAmount(hero, gold, upgradeInfo)
   );
-  const { battle } = useAppSelector((state) => state.battle);
+
   const [battleUpdateTimeout, setBattleUpdateTimeout] =
     useState<NodeJS.Timeout | null>(null);
 

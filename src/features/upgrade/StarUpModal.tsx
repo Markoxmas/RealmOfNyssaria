@@ -9,7 +9,8 @@ import { Hero } from "../heroes/heroesSlice";
 import { AVATARS } from "../../assets/avatars";
 import StarRateIcon from "@mui/icons-material/StarRate";
 import { Dispatch } from "@reduxjs/toolkit";
-import getAvailableHeroes from "../battle/lib/getAvailableHeroes";
+import getAvailableHeroesForSacrifice from "./lib/getAvailableHeroesForSacrifice";
+import getEmptySlotAmount from "./lib/getEmptySlotAmount";
 
 function renderStars(hero: Hero) {
   let stars = [];
@@ -62,34 +63,15 @@ const style = {
 
 export default function StarUpModal() {
   const dispatch = useAppDispatch();
-  const {
-    starUpModalOpen,
-    upgradeInfo,
-    starUpModalSlot,
-    chosenSacrifices,
-    hero: chosenHero,
-  } = useAppSelector((state) => state.upgrade);
+  const upgrade = useAppSelector((state) => state.upgrade);
   const { heroes } = useAppSelector((state) => state.heroes);
   const { battle } = useAppSelector((state) => state.battle);
-  const currentSacrificesAmount =
-    upgradeInfo.sacrifices[starUpModalSlot]?.amount;
-  const numOfEmptySlots = currentSacrificesAmount
-    ? currentSacrificesAmount - chosenSacrifices[starUpModalSlot].length
-    : 0;
-  const modalHeroes = upgradeInfo.sacrifices[starUpModalSlot]?.same
-    ? getAvailableHeroes(heroes, battle).filter(
-        (hero) =>
-          chosenHero?.name === hero.name &&
-          hero.stars === upgradeInfo.sacrifices[starUpModalSlot]?.stars
-      )
-    : getAvailableHeroes(heroes, battle).filter(
-        (hero) => hero.stars === upgradeInfo.sacrifices[starUpModalSlot]?.stars
-      );
-  const chosenHeroIds = chosenSacrifices[starUpModalSlot]
-    ?.map((hero) => hero._id)
-    .concat(chosenHero ? [chosenHero._id] : []);
-  const availableModalHeroes = modalHeroes.filter(
-    (hero) => !chosenHeroIds.includes(hero._id)
+
+  const numOfEmptySlots = getEmptySlotAmount(upgrade);
+  const availableHeroesToSacrifice = getAvailableHeroesForSacrifice(
+    heroes,
+    battle,
+    upgrade
   );
 
   const closeModal = () => {
@@ -101,7 +83,7 @@ export default function StarUpModal() {
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
-        open={starUpModalOpen}
+        open={upgrade.starUpModalOpen}
         onClose={closeModal}
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
@@ -111,7 +93,7 @@ export default function StarUpModal() {
           },
         }}
       >
-        <Fade in={starUpModalOpen}>
+        <Fade in={upgrade.starUpModalOpen}>
           <Box sx={style}>
             <Box
               sx={{
@@ -125,8 +107,8 @@ export default function StarUpModal() {
                 },
               }}
             >
-              {chosenSacrifices[starUpModalSlot] &&
-                chosenSacrifices[starUpModalSlot]
+              {upgrade.chosenSacrifices[upgrade.starUpModalSlot] &&
+                upgrade.chosenSacrifices[upgrade.starUpModalSlot]
                   .concat(new Array(numOfEmptySlots).fill(null))
                   .map((hero) => {
                     if (hero !== null) {
@@ -152,7 +134,7 @@ export default function StarUpModal() {
                 maxHeight: "40vh",
               }}
             >
-              {[...availableModalHeroes]
+              {[...availableHeroesToSacrifice]
                 .sort((a, b) => b.cp - a.cp)
                 .map((hero) => {
                   return renderHero(hero, dispatch);
