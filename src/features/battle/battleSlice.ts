@@ -1,6 +1,12 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Hero } from "../heroes/heroesSlice";
+import {
+  Currency,
+  Equipment,
+  Stackable,
+  Unstackable,
+} from "../inventory/types/itemSystem";
 
 export type BattleMilestone = {
   monster_hp: number;
@@ -13,17 +19,13 @@ export type Battle = {
   battleMilestones: BattleMilestone[];
 };
 
-export type Drops = {
-  [key: string]: number;
-};
-
 export interface BattleState {
   battle: Battle;
   battleModalOpen: boolean;
   modalBattleHeroes: Hero[];
   modalAvailableHeroes: Hero[];
   dropsModalOpen: boolean;
-  drops: Drops;
+  drops: Array<Equipment | Stackable | Unstackable | Currency>;
 }
 
 const initialState: BattleState = {
@@ -34,10 +36,7 @@ const initialState: BattleState = {
   modalBattleHeroes: [],
   modalAvailableHeroes: [],
   dropsModalOpen: false,
-  drops: {
-    gold: 0,
-    scrollOfSummon: 0,
-  },
+  drops: [],
 };
 
 export const fetchBattle = createAsyncThunk("battle/fetchBattle", async () => {
@@ -116,8 +115,7 @@ export const battleSlice = createSlice({
       })
       .addCase(claimLoot.fulfilled, (state, action) => {
         state.battle = action.payload.battle;
-        state.drops.gold = action.payload.drops.gold;
-        state.drops.scrollOfSummon = action.payload.drops.scroll_of_summon;
+        state.drops = action.payload.drops;
       })
       .addCase(claimLoot.rejected, (state, action) => {
         console.log(action.error.message);

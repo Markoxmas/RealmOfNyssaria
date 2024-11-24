@@ -4,16 +4,15 @@ import axios from "axios";
 import { summonHeroes } from "../summon/summonSlice";
 import { levelUp } from "../upgrade/upgradeSlice";
 import { claimLoot } from "../battle/battleSlice";
-
-export type Item = {
-  id: number;
-  name: string;
-  image: string;
-  quantity: number;
-};
+import {
+  Currency,
+  Equipment,
+  Stackable,
+  Unstackable,
+} from "./types/itemSystem";
 
 export interface InventoryState {
-  items: Item[];
+  items: Array<Equipment | Stackable | Unstackable | Currency>;
 }
 
 const initialState: InventoryState = {
@@ -42,10 +41,10 @@ const inventorySlice = createSlice({
       })
       .addCase(summonHeroes.fulfilled, (state, action) => {
         state.items = state.items.map((item) => {
-          if (item.id === 2) {
+          if (item.registryId === "scroll-of-summon") {
             return {
               ...item,
-              quantity: action.payload.scrollOfSummon,
+              quantity: action.payload.scrollOfSummon.quantity,
             };
           } else {
             return item;

@@ -4,7 +4,6 @@ import Inventory from "../models/Inventory";
 import Battle from "../models/Battle";
 import Hero from "../models/Hero";
 import { getInitialItems } from "../lib/getInitialItems";
-import { Inventory as InventoryType } from "../types/Inventory";
 
 const getUser = async (req: Request, res: Response) => {
   const userId = req.user?._id;
@@ -32,7 +31,7 @@ const restartUser = async (req: Request, res: Response) => {
   Battle.findByIdAndDelete(battleId);
   Hero.deleteMany({ _id: { $in: heroIds } });
 
-  const newInventory: InventoryType = {
+  const newInventory = {
     items: getInitialItems(),
   };
 

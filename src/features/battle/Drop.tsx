@@ -1,14 +1,18 @@
 import Card from "@mui/material/Card";
+import {
+  Currency,
+  Equipment,
+  Stackable,
+  Unstackable,
+} from "../inventory/types/itemSystem";
+import { ICONS } from "../../assets/icons";
 
 export default function Drop({
-  name,
-  amount,
-  icon,
+  drop,
 }: {
-  name: string;
-  amount: number;
-  icon: string;
+  drop: Equipment | Stackable | Unstackable | Currency;
 }) {
+  const quantity = (drop as Stackable | Currency).quantity;
   return (
     <Card
       sx={{
@@ -20,9 +24,9 @@ export default function Drop({
         justifyContent: "space-between",
       }}
     >
-      <div>{name}</div>
-      <img src={icon} width={60} height={60} />
-      <div>{amount}</div>
+      <div>{drop.name}</div>
+      <img src={ICONS[drop.icon]} width={60} height={60} />
+      {quantity ? <div>{quantity}</div> : <div>&nbsp;</div>}
     </Card>
   );
 }

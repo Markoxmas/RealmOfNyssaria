@@ -11,10 +11,6 @@ export const serverConfig = {
   battle: {
     max_monster_hp: 10000,
   },
-  drops: {
-    gold_multiplier: 0.1,
-    scroll_of_summon_drop_rate: 0.05,
-  },
   upgrade: {
     level_up_base: 100,
     level_up_multiplier: 1.05,
@@ -83,4 +79,26 @@ export const serverConfig = {
       ],
     ],
   },
+  dropRolls: [
+    {
+      registryId: "gold",
+      dropRate: 1,
+      quantity: 550,
+    },
+    {
+      registryId: "scroll-of-summon",
+      dropRate: 0.2,
+      quantity: 1,
+    },
+    {
+      registryId: "rock",
+      dropRate: 0.6,
+      quantity: 1,
+    },
+    {
+      registryId: "test-weapon",
+      dropRate: 0.1,
+      quantity: 1,
+    },
+  ],
 };

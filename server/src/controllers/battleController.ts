@@ -6,6 +6,8 @@ import { serverConfig } from "../serverConfig";
 import { calculateMonsterHp } from "../lib/calculateMonsterHp";
 import { getDrops } from "../lib/getDrops";
 import User from "../models/User";
+import { calculateBattleKills } from "../lib/calculateBattleKills";
+import addDropsToInventory from "../lib/addDropsToInventory";
 
 export const getAllBattles = async (
   req: Request,
@@ -151,26 +153,19 @@ export const claimBattleLoot = async (
       const heroes =
         battle.battleMilestones[battle.battleMilestones.length - 1].heroes;
 
-      const drops = getDrops(battle.battleMilestones);
+      const kills = calculateBattleKills(battle.battleMilestones);
+      const drops = getDrops(kills, serverConfig.dropRolls);
 
-      const updatedInventory = await Inventory.findOneAndUpdate(
-        { _id: inventoryId },
-        {
-          $inc: {
-            "items.$[item1].quantity": drops.gold,
-            "items.$[item2].quantity": drops.scroll_of_summon,
-          },
-        },
-        {
-          arrayFilters: [{ "item1.id": 1 }, { "item2.id": 2 }],
-          new: true,
-        }
-      );
-
-      if (!updatedInventory) {
+      const inventory = await Inventory.findById(inventoryId);
+      if (!inventory) {
         res.status(404).json({ error: "Inventory not found" });
         return;
       }
+
+      const updatedInventory = addDropsToInventory(inventory, drops);
+      inventory.items = updatedInventory.items;
+
+      await inventory.save();
 
       battle.battleMilestones = [
         {
@@ -182,7 +177,7 @@ export const claimBattleLoot = async (
       ];
 
       await battle.save();
-      res.status(200).json({ battle, drops, inventory: updatedInventory });
+      res.status(200).json({ battle, drops, inventory });
     } else {
       res.status(401).json({ error: "Unauthorized" });
     }

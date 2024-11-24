@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { summonHeroes as summonHeroesHelper } from "../lib/summonHeroes";
 import Hero, { IHero } from "../models/Hero";
-import Inventory, { IInventory } from "../models/Inventory";
+import Inventory from "../models/Inventory";
 import User from "../models/User";
+import { Stackable } from "../types/itemSystem/itemSystem";
 
 export const summonHeroes = async (
   req: Request,
@@ -29,12 +30,12 @@ export const summonHeroes = async (
       }
 
       // Check if the "Scroll of Summon" exists and if there's enough quantity
-      const hasSufficientScrolls = inventory.items.some(
-        (item) => item.id === 2 && item.quantity >= amount
-      );
+      const scrollOfSummon = inventory.items.find(
+        (item) => item.registryId === "scroll-of-summon"
+      ) as Stackable;
 
-      if (!hasSufficientScrolls) {
-        res.status(400).json({ error: "Not enough scrolls of summon" });
+      if (!(scrollOfSummon && scrollOfSummon.quantity >= amount)) {
+        res.status(404).json({ error: "Not enough scrolls of summon" });
         return;
       }
 
@@ -45,7 +46,7 @@ export const summonHeroes = async (
           $inc: { "items.$[elem].quantity": -amount },
         },
         {
-          arrayFilters: [{ "elem.id": 2 }],
+          arrayFilters: [{ "elem.registryId": "scroll-of-summon" }],
           new: true,
         }
       );
@@ -67,8 +68,9 @@ export const summonHeroes = async (
 
       res.status(201).json({
         summonedHeroes: savedHeroes,
-        scrollOfSummon: updatedInventory?.items.find((item) => item.id === 2)
-          ?.quantity,
+        scrollOfSummon: updatedInventory?.items.find(
+          (item) => item.registryId === "scroll-of-summon"
+        ),
       });
     } else {
       res.status(401).json({ error: "Unauthorized" });

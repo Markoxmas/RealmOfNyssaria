@@ -1,8 +1,13 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { Item } from "../types/Item";
+import {
+  Currency,
+  Equipment,
+  Stackable,
+  Unstackable,
+} from "../types/itemSystem/itemSystem";
 
 export interface IInventory extends Document {
-  items: Item[];
+  items: Array<Equipment | Stackable | Unstackable | Currency>;
 }
 
 const InventorySchema: Schema = new Schema({

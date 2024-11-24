@@ -1,51 +1,12 @@
 import { Button } from "@mui/material";
-import { UpgradeInfo, levelUp as levelUpAction } from "./upgradeSlice";
+import { levelUp as levelUpAction } from "./upgradeSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Hero } from "../heroes/heroesSlice";
 import { useEffect, useState } from "react";
 import { updateBattleHeroes } from "../battle/battleSlice";
 import isHeroInBattle from "../battle/lib/isHeroInBattle";
 import getHeroesInBattle from "../battle/lib/getHeroesInBattle";
-
-export const maxLevelUpAmount = (
-  hero: Hero | null,
-  gold: number,
-  upgradeInfo: UpgradeInfo
-) => {
-  if (hero === null) {
-    return;
-  }
-
-  let requiredGold = {
-    one: 0,
-    ten: 0,
-    max: 0,
-  };
-  let finalLevelUpAmount = 0;
-  const maxLevelUpAmount = upgradeInfo.maxLevel - hero.level;
-  for (let i = 0; i < maxLevelUpAmount; i++) {
-    requiredGold.max += Math.floor(
-      upgradeInfo.levelUpBase *
-        upgradeInfo.levelUpMultiplier ** (hero.level + i - 1)
-    );
-    if (requiredGold.max <= gold) {
-      finalLevelUpAmount++;
-      if (i === 0) {
-        requiredGold.one = requiredGold.max;
-      }
-      if (i === 9) {
-        requiredGold.ten = requiredGold.max;
-      }
-    } else {
-      break;
-    }
-  }
-
-  return {
-    finalLevelUpAmount,
-    requiredGold,
-  };
-};
+import { Currency } from "../inventory/types/itemSystem";
+import getMaxLevelUpAmount from "./lib/getMaxLevelUpAmount";
 
 export default function LevelUp() {
   const dispatch = useAppDispatch();
@@ -53,16 +14,18 @@ export default function LevelUp() {
   const inventory = useAppSelector((state) => state.inventory);
   const { battle } = useAppSelector((state) => state.battle);
   const upgradeInfo = useAppSelector((state) => state.upgrade.upgradeInfo);
-  const gold = inventory.items.find((item) => item.id === 1)?.quantity || 0;
+  const gold = inventory.items.find(
+    (item) => item.registryId === "gold"
+  ) as Currency;
   const [levelUpInfo, setLevelUpInfo] = useState(
-    maxLevelUpAmount(hero, gold, upgradeInfo)
+    getMaxLevelUpAmount(hero, gold, upgradeInfo)
   );
 
   const [battleUpdateTimeout, setBattleUpdateTimeout] =
     useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    setLevelUpInfo(maxLevelUpAmount(hero, gold, upgradeInfo));
+    setLevelUpInfo(getMaxLevelUpAmount(hero, gold, upgradeInfo));
   }, [hero?.level]);
 
   const levelUp = (amount: number) => {
@@ -100,7 +63,7 @@ export default function LevelUp() {
         gap: "5px",
       }}
     >
-      <div>You have {gold} gold</div>
+      <div>You have {gold?.quantity || 0} gold</div>
       {levelUpInfo && levelUpInfo.finalLevelUpAmount > 1 && (
         <Button variant="contained" onClick={() => levelUp(1)}>
           Level up 1 ({levelUpInfo?.requiredGold.one} gold)

@@ -5,12 +5,15 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { summonHeroes } from "./summonSlice";
+import { Stackable } from "../inventory/types/itemSystem";
 
 export default function SummonCard() {
   const dispatch = useAppDispatch();
   const inventory = useAppSelector((state) => state.inventory);
   const inventoryItems = inventory.items;
-  const scrollOfSummon = inventoryItems.find((item) => item.id === 2);
+  const scrollOfSummon = inventoryItems.find(
+    (item) => item.registryId === "scroll-of-summon"
+  ) as Stackable;
   return (
     <Card
       sx={{

@@ -3,7 +3,6 @@ import User from "../models/User";
 import { generateToken, clearToken } from "../lib/auth";
 import { v4 as uuidv4 } from "uuid";
 import Battle from "../models/Battle";
-import { Inventory as InventoryType } from "../types/Inventory";
 import { getInitialItems } from "../lib/getInitialItems";
 import Inventory from "../models/Inventory";
 
@@ -32,7 +31,7 @@ const registerUser = async (req: Request, res: Response) => {
     battleMilestones: [],
   });
 
-  const newInventory: InventoryType = {
+  const newInventory = {
     items: getInitialItems(),
   };
 
