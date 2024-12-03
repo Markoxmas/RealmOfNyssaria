@@ -1,9 +1,9 @@
-type HeroLibraryItem = {
+type HeroRegistryItem = {
   name: string;
   image: string;
 };
 
-export const heroLibrary: Array<HeroLibraryItem> = [
+export const heroRegistry: Array<HeroRegistryItem> = [
   {
     name: "Ivaras",
     image: "Ivaras",

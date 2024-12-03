@@ -1,4 +1,4 @@
-import { DropRolls } from "../types/Drops";
+import { DropRolls } from "../types/battleSystem";
 import { itemRegistry } from "../itemRegistry";
 import { itemCreator } from "./itemCreator";
 import {

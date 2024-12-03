@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import Inventory from "../models/Inventory";
-import Battle from "../models/Battle";
+import Battle, { IBattle } from "../models/Battle";
 import Hero from "../models/Hero";
 import { getInitialItems } from "../lib/getInitialItems";
+import { battleRegistry } from "../battleRegistry";
 
 const getUser = async (req: Request, res: Response) => {
   const userId = req.user?._id;
@@ -25,10 +26,10 @@ const restartUser = async (req: Request, res: Response) => {
     return;
   }
 
-  const { inventoryId, battleId, heroIds } = user;
+  const { inventoryId, battleIds, heroIds } = user;
 
   Inventory.findByIdAndDelete(inventoryId);
-  Battle.findByIdAndDelete(battleId);
+  Battle.deleteMany({ _id: { $in: battleIds } });
   Hero.deleteMany({ _id: { $in: heroIds } });
 
   const newInventory = {
@@ -37,12 +38,19 @@ const restartUser = async (req: Request, res: Response) => {
 
   const inventory = await Inventory.create(newInventory);
 
-  const battle = await Battle.create({
-    battleMilestones: [],
-  });
+  const battles = await Promise.all(
+    battleRegistry.passive.map(async (passiveBattle) => {
+      const battle = await Battle.create({
+        registryId: passiveBattle.registryId,
+        battleMilestones: [],
+      });
+
+      return battle;
+    })
+  );
 
   user.inventoryId = inventory._id as string;
-  user.battleId = battle._id as string;
+  user.battleIds = battles.map((battle) => battle._id) as string[];
   user.heroIds = [];
 
   await user.save();

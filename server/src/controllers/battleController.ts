@@ -24,16 +24,16 @@ export const getAllBattles = async (
         return;
       }
 
-      const { battleId } = user;
+      const { battleIds } = user;
 
-      const battle = await Battle.findById(battleId);
+      const battles = await Battle.find({ _id: { $in: battleIds } });
 
-      if (!battle) {
-        res.status(404).json({ error: "Battle not found" });
+      if (!battles) {
+        res.status(404).json({ error: "No battles found" });
         return;
       }
 
-      res.status(200).json(battle);
+      res.status(200).json(battles);
     } else {
       res.status(401).json({ error: "Unauthorized" });
     }
@@ -70,13 +70,19 @@ export const updateBattle = async (
 
     if (userId) {
       const user = await User.findById(userId);
+      const { battleId } = req.params;
 
       if (!user) {
         res.status(404).json({ error: "User not found" });
         return;
       }
 
-      const { battleId } = user;
+      const { battleIds } = user;
+
+      if (!battleIds.includes(battleId)) {
+        res.status(401).json({ error: "Unauthorized for this battle" });
+        return;
+      }
 
       const heroes = await Hero.find({ _id: { $in: heroes_ids } });
       if (heroes.length !== heroes_ids.length) {
@@ -129,6 +135,7 @@ export const claimBattleLoot = async (
 ): Promise<void> => {
   try {
     const userId = req.user?._id;
+    const { battleId } = req.params;
 
     if (userId) {
       const user = await User.findById(userId);
@@ -138,7 +145,12 @@ export const claimBattleLoot = async (
         return;
       }
 
-      const { battleId, inventoryId } = user;
+      const { battleIds, inventoryId } = user;
+
+      if (!battleIds.includes(battleId)) {
+        res.status(401).json({ error: "Unauthorized for this battle" });
+        return;
+      }
 
       const battle = await Battle.findById(battleId);
       if (!battle) {

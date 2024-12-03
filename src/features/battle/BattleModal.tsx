@@ -11,13 +11,14 @@ import {
   initModalAvailableHeroes,
   addHeroToBattle,
   removeHeroFromBattle,
+  Battle,
 } from "./battleSlice";
 import { Divider, Paper } from "@mui/material";
 import { Hero } from "../heroes/heroesSlice";
 import StarRateIcon from "@mui/icons-material/StarRate";
 import { AVATARS } from "../../assets/avatars";
 import getBattleSlots from "./lib/getBattleSlots";
-import getModalBattleHeroes from "./lib/getModalBattleHeroes";
+import getHeroesFromBattle from "./lib/getHeroesFromBattle";
 import getAvailableHeroes from "./lib/getAvailableHeroes";
 import { updateBattleHeroes } from "./battleSlice";
 
@@ -43,21 +44,18 @@ const style = {
   p: 4,
 };
 
-export default function BattleModal() {
+export default function BattleModal({ battle }: { battle: Battle }) {
   const dispatch = useAppDispatch();
-  const { battleModalOpen, battle, modalBattleHeroes, modalAvailableHeroes } =
+  const { battleModalOpen, modalBattleHeroes, modalAvailableHeroes } =
     useAppSelector((state) => state.battle);
-  const { heroes } = useAppSelector((state) => state.heroes);
-
-  useEffect(() => {
-    if (battle && heroes) {
-      dispatch(initModalBattleHeroes(getModalBattleHeroes(heroes, battle)));
-      dispatch(initModalAvailableHeroes(getAvailableHeroes(heroes, battle)));
-    }
-  }, [battleModalOpen]);
 
   const finishModifyingHeroes = () => {
-    dispatch(updateBattleHeroes(modalBattleHeroes.map((hero) => hero._id)));
+    dispatch(
+      updateBattleHeroes({
+        battle_id: battle._id,
+        heroes_ids: modalBattleHeroes.map((hero) => hero._id),
+      })
+    );
     dispatch(closeBattleModal());
   };
 

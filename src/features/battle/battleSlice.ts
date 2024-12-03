@@ -16,11 +16,13 @@ export type BattleMilestone = {
 };
 
 export type Battle = {
+  _id: string;
+  registryId: string;
   battleMilestones: BattleMilestone[];
 };
 
 export interface BattleState {
-  battle: Battle;
+  battles: Battle[];
   battleModalOpen: boolean;
   modalBattleHeroes: Hero[];
   modalAvailableHeroes: Hero[];
@@ -29,9 +31,13 @@ export interface BattleState {
 }
 
 const initialState: BattleState = {
-  battle: {
-    battleMilestones: [],
-  },
+  battles: [
+    {
+      _id: "",
+      registryId: "",
+      battleMilestones: [],
+    },
+  ],
   battleModalOpen: false,
   modalBattleHeroes: [],
   modalAvailableHeroes: [],
@@ -46,18 +52,27 @@ export const fetchBattle = createAsyncThunk("battle/fetchBattle", async () => {
 
 export const updateBattleHeroes = createAsyncThunk(
   "battle/updateBattleHeroes",
-  async (heroes_ids: string[]) => {
-    const response = await axios.patch("/api/battle/update", {
+  async ({
+    battle_id,
+    heroes_ids,
+  }: {
+    battle_id: string;
+    heroes_ids: string[];
+  }) => {
+    const response = await axios.patch(`/api/battle/update/${battle_id}`, {
       heroes_ids,
     });
     return response.data;
   }
 );
 
-export const claimLoot = createAsyncThunk("battle/claimLoot", async () => {
-  const response = await axios.patch("/api/battle/claim");
-  return response.data;
-});
+export const claimLoot = createAsyncThunk(
+  "battle/claimLoot",
+  async (battle_id: string) => {
+    const response = await axios.patch(`/api/battle/claim/${battle_id}`);
+    return response.data;
+  }
+);
 
 export const battleSlice = createSlice({
   name: "battle",
@@ -102,19 +117,25 @@ export const battleSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchBattle.fulfilled, (state, action) => {
-        state.battle = action.payload;
+        state.battles = action.payload;
       })
       .addCase(fetchBattle.rejected, (state, action) => {
         console.log(action.error.message);
       })
       .addCase(updateBattleHeroes.fulfilled, (state, action) => {
-        state.battle = action.payload;
+        state.battles = state.battles.map((battle) =>
+          battle._id === action.payload._id ? action.payload : battle
+        );
       })
       .addCase(updateBattleHeroes.rejected, (state, action) => {
         console.log(action.error.message);
       })
       .addCase(claimLoot.fulfilled, (state, action) => {
-        state.battle = action.payload.battle;
+        state.battles = state.battles.map((battle) =>
+          battle._id === action.payload.battle._id
+            ? action.payload.battle
+            : battle
+        );
         state.drops = action.payload.drops;
       })
       .addCase(claimLoot.rejected, (state, action) => {

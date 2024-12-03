@@ -1,6 +1,6 @@
 import { HeroData } from "../types/HeroData";
 import { serverConfig } from "../serverConfig";
-import { heroLibrary } from "../heroLibrary";
+import { heroRegistry } from "../heroRegistry";
 import { calculateCp } from "./calculateCp";
 
 function getRandomStars() {
@@ -20,8 +20,8 @@ export const summonHeroes = (amount: number) => {
   const summonedHeroes: Array<HeroData> = [];
 
   for (let i = 0; i < amount; i++) {
-    const randomIndex = Math.floor(Math.random() * heroLibrary.length);
-    const chosenHero = heroLibrary[randomIndex];
+    const randomIndex = Math.floor(Math.random() * heroRegistry.length);
+    const chosenHero = heroRegistry[randomIndex];
 
     const nextHero: HeroData = {
       name: chosenHero.name,

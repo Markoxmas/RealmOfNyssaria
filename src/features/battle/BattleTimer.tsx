@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import calculateBattleTime from "./lib/calculateBattleTime";
 import formatBattleTime from "./lib/formatBattleTime";
 import TimerIcon from "@mui/icons-material/Timer";
+import { Battle } from "./battleSlice";
 
-export default function BattleTimer() {
+export default function BattleTimer({ battle }: { battle: Battle }) {
   const [timer, setTimer] = useState("00:00:00");
-  const { battle } = useAppSelector((state) => state.battle);
 
   useEffect(() => {
     // So it calculates it when you switch back to the battle tab

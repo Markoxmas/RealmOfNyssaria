@@ -1,11 +1,14 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useState, useEffect } from "react";
 import StarUpSlot from "./StarUpSlot";
 import StarUpModal from "./StarUpModal";
 import { Button } from "@mui/material";
 import { UpgradeInfo, starUp } from "./upgradeSlice";
 import { Hero } from "../heroes/heroesSlice";
-import { updateBattleHeroes } from "../battle/battleSlice";
+import { Battle, updateBattleHeroes } from "../battle/battleSlice";
 import getHeroesInBattle from "../battle/lib/getHeroesInBattle";
+import getHeroBattleId from "../battle/lib/getHeroBattleId";
+import getHeroesFromBattle from "../battle/lib/getHeroesFromBattle";
 
 function areSacrificesFulfilled(
   upgradeInfo: UpgradeInfo,
@@ -27,7 +30,18 @@ export default function StarUp() {
   const { upgradeInfo, chosenSacrifices, hero } = useAppSelector(
     (state) => state.upgrade
   );
-  const { battle } = useAppSelector((state) => state.battle);
+  const { battles } = useAppSelector((state) => state.battle);
+  const [battle, setBattle] = useState<Battle | null>(null);
+
+  useEffect(() => {
+    if (hero) {
+      const battleId = getHeroBattleId(battles, hero._id);
+      const battle = battles.find((battle) => battle._id === battleId);
+      if (battle) {
+        setBattle(battle);
+      }
+    }
+  }, [hero]);
 
   return (
     <div
@@ -52,13 +66,18 @@ export default function StarUp() {
                 sacrificeIds: chosenSacrifices.flat().map((hero) => hero._id),
               })
             );
-            setTimeout(() => {
-              dispatch(
-                updateBattleHeroes(
-                  getHeroesInBattle(battle).map((hero) => hero._id)
-                )
-              );
-            }, 2000);
+            if (battle) {
+              setTimeout(() => {
+                dispatch(
+                  updateBattleHeroes({
+                    battle_id: battle._id,
+                    heroes_ids: getHeroesFromBattle(battle).map(
+                      (hero) => hero._id
+                    ),
+                  })
+                );
+              }, 2000);
+            }
           }
         }}
       >

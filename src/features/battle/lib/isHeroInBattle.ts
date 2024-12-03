@@ -1,9 +1,14 @@
+import { Hero } from "../../heroes/heroesSlice";
 import { Battle } from "../battleSlice";
 
-export default function isHeroInBattle(battle: Battle, heroId: string) {
-  const heroesInBattle =
-    battle && battle.battleMilestones.length > 0
-      ? battle.battleMilestones[battle.battleMilestones.length - 1].heroes
-      : [];
-  return heroesInBattle.some((battleHero) => battleHero._id === heroId);
+export default function isHeroInBattle(battles: Battle[], heroId: string) {
+  const allHeroesInBattle: Hero[] = [];
+  battles.forEach((battle) => {
+    if (battle.battleMilestones.length > 0) {
+      allHeroesInBattle.push(
+        ...battle.battleMilestones[battle.battleMilestones.length - 1].heroes
+      );
+    }
+  });
+  return allHeroesInBattle.some((battleHero) => battleHero._id === heroId);
 }

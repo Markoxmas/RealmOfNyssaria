@@ -1,7 +1,9 @@
 import { Battle } from "../battleSlice";
 
-export default function getHeroesInBattle(battle: Battle) {
-  return battle && battle.battleMilestones.length > 0
-    ? battle.battleMilestones[battle.battleMilestones.length - 1].heroes
-    : [];
+export default function getHeroesInBattle(battles: Battle[]) {
+  return battles.flatMap((battle) => {
+    return battle.battleMilestones.length > 0
+      ? battle.battleMilestones[battle.battleMilestones.length - 1].heroes
+      : [];
+  });
 }

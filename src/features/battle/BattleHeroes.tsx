@@ -5,7 +5,7 @@ import { AVATARS } from "../../assets/avatars";
 import StarRateIcon from "@mui/icons-material/StarRate";
 import { selectHero } from "../upgrade/upgradeSlice";
 import getBattleSlots from "./lib/getBattleSlots";
-import { openBattleModal } from "./battleSlice";
+import { Battle, openBattleModal } from "./battleSlice";
 import { ICONS } from "../../assets/icons";
 
 function renderStars(hero: Hero) {
@@ -18,9 +18,8 @@ function renderStars(hero: Hero) {
   return stars;
 }
 
-export default function BattleHeroes() {
+export default function BattleHeroes({ battle }: { battle: Battle }) {
   const dispatch = useAppDispatch();
-  const { battle } = useAppSelector((state) => state.battle);
 
   return (
     <div

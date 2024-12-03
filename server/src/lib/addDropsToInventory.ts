@@ -1,5 +1,5 @@
 import { IInventory } from "../models/Inventory";
-import { Drop } from "../types/Drops";
+import { Drop } from "../types/battleSystem";
 import { Currency, ItemType, Stackable } from "../types/itemSystem/itemSystem";
 
 export default function addDropsToInventory(

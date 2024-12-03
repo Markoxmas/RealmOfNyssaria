@@ -5,18 +5,18 @@ import { UpgradeState } from "../upgradeSlice";
 
 export default function getAvailableHeroesForSacrifice(
   heroes: Hero[],
-  battle: Battle,
+  battles: Battle[],
   upgrade: UpgradeState
 ) {
   const modalHeroes = upgrade.upgradeInfo.sacrifices[upgrade.starUpModalSlot]
     ?.same
-    ? getAvailableHeroes(heroes, battle).filter(
+    ? getAvailableHeroes(heroes, battles).filter(
         (hero) =>
           upgrade.hero?.name === hero.name &&
           hero.stars ===
             upgrade.upgradeInfo.sacrifices[upgrade.starUpModalSlot]?.stars
       )
-    : getAvailableHeroes(heroes, battle).filter(
+    : getAvailableHeroes(heroes, battles).filter(
         (hero) =>
           hero.stars ===
           upgrade.upgradeInfo.sacrifices[upgrade.starUpModalSlot]?.stars

@@ -65,12 +65,12 @@ export default function StarUpModal() {
   const dispatch = useAppDispatch();
   const upgrade = useAppSelector((state) => state.upgrade);
   const { heroes } = useAppSelector((state) => state.heroes);
-  const { battle } = useAppSelector((state) => state.battle);
+  const { battles } = useAppSelector((state) => state.battle);
 
   const numOfEmptySlots = getEmptySlotAmount(upgrade);
   const availableHeroesToSacrifice = getAvailableHeroesForSacrifice(
     heroes,
-    battle,
+    battles,
     upgrade
   );
 

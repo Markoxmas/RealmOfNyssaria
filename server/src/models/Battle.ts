@@ -14,10 +14,12 @@ export interface BattleMilestone {
 }
 
 export interface IBattle extends Document {
+  registryId: string;
   battleMilestones: BattleMilestone[];
 }
 
 const BattleSchema: Schema = new Schema({
+  registryId: { type: String, required: true },
   battleMilestones: [
     {
       monster_hp: { type: Number, required: true },

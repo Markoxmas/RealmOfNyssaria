@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
-import { openDropsModal, closeDropsModal, claimLoot } from "./battleSlice";
+import { closeDropsModal } from "./battleSlice";
 import Drop from "./Drop";
 
 const style = {
@@ -23,19 +23,12 @@ const style = {
   justifyContent: "space-around",
 };
 
-export default function ClaimLootModal() {
+export default function BattleLootModal() {
   const dispatch = useAppDispatch();
   const { dropsModalOpen, drops } = useAppSelector((state) => state.battle);
 
-  const onClaimLoot = () => {
-    dispatch(claimLoot());
-    dispatch(openDropsModal());
-  };
   return (
     <div>
-      <Button onClick={() => dispatch(onClaimLoot)} variant="contained">
-        Claim loot
-      </Button>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
